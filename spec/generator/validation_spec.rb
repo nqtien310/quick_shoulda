@@ -123,6 +123,39 @@ describe 'QuickShoulda::Generator::Validation' do
     end
   end
 
+  describe "#option_method" do
+    context 'rails validate option is mapped to a shoulda method' do
+      let(:option) { :minimum }
+      let(:expected) { 'is_at_least' }
+      let(:value) { '' }
+
+      it 'should return the mapped shoulda method' do
+        send(:option_method, option, value).should eq expected
+      end
+    end
+
+    context 'rails validate option is mapped to a hash' do
+      context 'value type mapped to a shoulda method' do
+        let(:option) { :in }
+        let(:value) { 1..2 }
+        let(:expected) { 'in_range' }
+
+        it 'should return the mapped shoulda method' do
+          send(:option_method, option, value).should eq expected
+        end
+      end
+
+      context 'value type is not mapped to a shoulda method' do
+        let(:option) { :in }
+        let(:value) { 'abcdef' }        
+
+        it 'should return nil' do
+          send(:option_method, option, value).should be_nil
+        end
+      end
+    end
+  end
+
   describe '#option_value' do
     context 'value is String' do
       let(:value) { 'value' }

@@ -1,15 +1,21 @@
 module QuickShoulda
   module Generator
     module Validation
+      InclusionOptions = {
+        :range      => 'in_range',
+        :array      => 'in_array'
+      }
+
       OptionMethods = {
         :minimum    => 'is_at_least',
         :maximum    => 'is_at_most',
         :is         => 'is_equal_to',
         :too_short  => 'with_short_message',
         :too_long   => 'with_long_message',
-        :message    => 'with_message'
-
+        :message    => 'with_message',
+        :in         => InclusionOptions
       }
+
       def generate_test_cases_for_model(model)
         model.validators.each { |validator| generate_test_cases_for_validator(validator) }
       end
@@ -44,7 +50,15 @@ module QuickShoulda
         end
 
         def shoulda_option_method(option, value)
-          ".#{OptionMethods[option.to_sym]}#{option_value(value)}" if OptionMethods[option]
+          method = option_method(option, value)
+          value  = option_value(value)
+          ".#{method}#{value}" if method
+        end
+
+        def option_method(option, value)
+          option_method = OptionMethods[option.to_sym]          
+          option_method = option_method[value.class.to_s.downcase.to_sym] if option_method.is_a?(Hash)          
+          option_method
         end
 
         def option_value(value)
