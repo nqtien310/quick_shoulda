@@ -112,7 +112,7 @@ describe 'QuickShoulda::Generator::Validation' do
     end
   end
 
-  describe "#generate" do
+  describe '#generate' do
     let(:validation_type) { 'length' }
     let(:attribute) { :username }
     let(:options) { {:minimum=>1, :maximum=>20} }
@@ -120,6 +120,24 @@ describe 'QuickShoulda::Generator::Validation' do
 
     it 'should return 1 complete shoulda test case' do
       send(:generate_test_case, validation_type, attribute, options).should eq expected
+    end
+  end
+
+  describe '#option_value' do
+    context 'value is String' do
+      let(:value) { 'value' }
+      let(:expected) { "('#{value}')" }
+      it 'should return value encapsulated inside single quote' do
+        send(:option_value, value).should eq expected
+      end
+    end
+
+    context 'value is not String' do
+      let(:value) { 100 }
+      let(:expected) { "(#{value})" }
+      it 'should return value encapsulated inside single quote' do
+        send(:option_value, value).should eq expected
+      end
     end
   end
 end

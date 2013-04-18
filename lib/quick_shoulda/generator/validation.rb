@@ -2,9 +2,13 @@ module QuickShoulda
   module Generator
     module Validation
       OptionMethods = {
-        :minimum => 'is_at_least',
-        :maximum => 'is_at_most',
-        :is      => 'is_equal_to'
+        :minimum    => 'is_at_least',
+        :maximum    => 'is_at_most',
+        :is         => 'is_equal_to',
+        :too_short  => 'with_short_message',
+        :too_long   => 'with_long_message',
+        :message    => 'with_message'
+
       }
       def generate_test_cases_for_model(model)
         model.validators.each { |validator| generate_test_cases_for_validator(validator) }
@@ -40,7 +44,11 @@ module QuickShoulda
         end
 
         def shoulda_option_method(option, value)
-          ".#{OptionMethods[option.to_sym]}(#{value})" if OptionMethods[option]
+          ".#{OptionMethods[option.to_sym]}#{option_value(value)}" if OptionMethods[option]
+        end
+
+        def option_value(value)
+          value.is_a?(String) ? "('#{value}')" : "(#{value})"
         end
     end
   end
