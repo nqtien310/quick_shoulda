@@ -13,7 +13,8 @@ module QuickShoulda
         :too_short  => 'with_short_message',
         :too_long   => 'with_long_message',
         :message    => 'with_message',
-        :in         => InclusionOptions
+        :in         => InclusionOptions,
+        :within     => InclusionOptions
       }
 
       def generate_test_cases_for_model(model)
