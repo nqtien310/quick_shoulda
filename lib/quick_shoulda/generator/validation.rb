@@ -53,7 +53,7 @@ module QuickShoulda
 
         def shoulda_option_method(option, value)
           method = option_method(option, value)          
-          method == OptionMethods[:scope] ? scope_to_method(value) : normal_method(method, value) if method
+          method == OptionMethods[:scope] ? scope_to(value) : normal_method(method, value) if method
         end
 
         def option_method(option, value)
