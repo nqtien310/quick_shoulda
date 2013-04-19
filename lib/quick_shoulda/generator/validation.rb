@@ -35,7 +35,7 @@ module QuickShoulda
         end
 
         def generate_test_cases(validation_type, attributes, options)
-          attributes.map { |attribute| generate(validation_type, attribute, options)}
+          attributes.map { |attribute| generate_test_case(validation_type, attribute, options)}
         end
 
         def generate_test_case(validation_type, attribute, options)
