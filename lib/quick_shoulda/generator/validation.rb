@@ -10,9 +10,10 @@ module QuickShoulda
         :minimum    => 'is_at_least',
         :maximum    => 'is_at_most',
         :is         => 'is_equal_to',
+        :scope      => 'scope_to',
         :too_short  => 'with_short_message',
         :too_long   => 'with_long_message',
-        :message    => 'with_message',
+        :message    => 'with_message',        
         :in         => InclusionOptions,
         :within     => InclusionOptions
       }
@@ -51,15 +52,23 @@ module QuickShoulda
         end
 
         def shoulda_option_method(option, value)
-          method = option_method(option, value)
-          value  = option_value(value)
-          ".#{method}#{value}" if method
+          method = option_method(option, value)          
+          method == OptionMethods[:scope] ? scope_to_method(value) : normal_method(method, value) if method
         end
 
         def option_method(option, value)
-          option_method = OptionMethods[option.to_sym]          
-          option_method = option_method[value.class.to_s.downcase.to_sym] if option_method.is_a?(Hash)          
+          option_method = OptionMethods[option.to_sym]
+          option_method = option_method[value.class.to_s.downcase.to_sym] if option_method.is_a?(Hash)
           option_method
+        end
+
+        def normal_method(method, value)          
+          ".#{method}#{option_value(value)}"
+        end
+
+        def scope_to(value)
+          method = OptionMethods[:scope]
+          ([] << value).flatten.map { | v | ".#{method}(:#{v})" }.join
         end
 
         def option_value(value)

@@ -63,24 +63,14 @@ describe 'QuickShoulda::Generator::Validation' do
     end
   end
 
-  describe '#shoulda_option_method' do
-    context 'given option is correctly mapped to 1 shoulda option method' do
-      let(:option) { :minimum }
-      let(:value) { 50 }
-      let(:expected) { ".is_at_least(#{value})" }
+  describe '#normal_method' do
+    let(:method) { 'is_at_least'}
+    let(:value) { 50 }
+    let(:expected) { '.is_at_least(50)' }
+    before { should_receive(:option_value).with(value).and_return('(50)') }
 
-      it 'should return shoulda option method with value in string' do
-        send(:shoulda_option_method,option,value).should == expected
-      end
-    end
-
-    context 'given option is not correctly mapped to 1 shoulda option method' do
-      let(:option) { :invalid_option }
-      let(:value) { 5 }
-
-      it 'should return nil' do
-        send(:shoulda_option_method,option,value).should be_nil
-      end
+    it 'should return a text contain both method and value' do
+      send(:normal_method, method, value).should eq expected
     end
   end
 
@@ -170,6 +160,25 @@ describe 'QuickShoulda::Generator::Validation' do
       let(:expected) { "(#{value})" }
       it 'should return value encapsulated inside single quote' do
         send(:option_value, value).should eq expected
+      end
+    end
+  end
+
+  describe '#scope_to' do
+    context 'single attr' do
+      let(:value) { :username }
+      let(:expected) { ".scope_to(:username)" }
+      it 'should encapsulate attr inside scope_to()' do
+        send(:scope_to, value).should eq expected
+      end
+    end
+
+    context 'array attr' do
+      let(:value) { [:account, :date]}
+      let(:expected) { ".scope_to(:account).scope_to(:date)"}
+
+      it 'should encapsulate each attr inside scope_to()' do
+        send(:scope_to, value).should eq expected
       end
     end
   end
