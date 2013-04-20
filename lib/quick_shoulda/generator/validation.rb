@@ -12,7 +12,7 @@ module QuickShoulda
         :minimum    => 'is_at_least',
         :maximum    => 'is_at_most',
         :is         => 'is_equal_to',
-        :scope      => 'scope_to',
+        :scope      => 'scoped_to',
         :too_short  => 'with_short_message',
         :too_long   => 'with_long_message',
         :message    => 'with_message',        
@@ -21,7 +21,7 @@ module QuickShoulda
       }
 
       def generate(model)
-        model.validators.each { |validator| generate_for_validator(validator) }
+        model.validators.map { |validator| generate_for_validator(validator) }.compact.flatten
       end
 
       private
