@@ -28,4 +28,64 @@ describe "QuickShoulda::RandomString" do
 			end
 		end
 	end
+
+	describe '#generate' do
+		before { QuickShoulda::RandomString.should_receive(:sample_strings).and_return(sample_strings) }
+		context 'only matches strings' do
+			let(:sample_strings) {
+				[
+					'nqtien310@gmail.com',
+					'nqtien310@hotdev.com'
+				]
+			}			
+			let(:expected) do
+				{
+					matched_strings: sample_strings,
+					unmatched_strings: []
+				}
+			end
+
+			it 'should return matches string' do
+				subject.generate.should eq expected
+			end
+		end
+
+		context 'only unmatched strings' do
+			let(:sample_strings) {
+				[
+					'nqtien310',
+					'nqtien310'
+				]
+			}			
+			let(:expected) do
+				{
+					matched_strings: [],
+					unmatched_strings: sample_strings
+				}
+			end
+
+			it 'should return matches string' do
+				subject.generate.should eq expected
+			end
+		end
+
+		context 'both matched and unmatched strings' do
+			let(:sample_strings) {
+				[
+					'nqtien310@gmail.com',
+					'nqtien310'
+				]
+			}			
+			let(:expected) do
+				{
+					matched_strings: ['nqtien310@gmail.com'],
+					unmatched_strings: ['nqtien310']
+				}
+			end
+
+			it 'should return matches string' do
+				subject.generate.should eq expected
+			end
+		end
+	end
 end
