@@ -1,3 +1,5 @@
+require 'quick_shoulda/random_string'
+
 module QuickShoulda
   module Generator
     module Validation
