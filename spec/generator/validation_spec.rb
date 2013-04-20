@@ -29,7 +29,6 @@ describe 'QuickShoulda::Generator::Validation' do
     let(:validators) { [presence_validator, uniqueness_validator, format_validator, length_validator] }
     let(:model) { mock(:model, validators: validators) }
 
-
     before { QuickShoulda::RandomString.should_receive(:generate).with(/abc/).and_return(random_strings) }
 
     let(:expected) {
@@ -119,7 +118,8 @@ describe 'QuickShoulda::Generator::Validation' do
     context 'can look up for option method' do
       let(:value) { 'value' }
       context 'scope_to option method' do
-        before { should_receive(:shoulda_option_method_name).and_return('scope_to') }
+        before { should_receive(:shoulda_option_method_name).and_return('scoped_to') }
+
         it 'should invoke #scope_to' do
           should_receive(:shoulda_scope_to_method).with(value).once
           send(:shoulda_option_method, nil, value)
@@ -256,7 +256,7 @@ describe 'QuickShoulda::Generator::Validation' do
   describe '#shoulda_scope_to_method' do
     context 'single attr' do
       let(:value) { :username }
-      let(:expected) { ".scope_to(:username)" }
+      let(:expected) { ".scoped_to(:username)" }
       it 'should encapsulate attr inside scope_to()' do
         send(:shoulda_scope_to_method, value).should eq expected
       end
@@ -264,7 +264,7 @@ describe 'QuickShoulda::Generator::Validation' do
 
     context 'array attr' do
       let(:value) { [:account, :date]}
-      let(:expected) { ".scope_to(:account).scope_to(:date)"}
+      let(:expected) { ".scoped_to(:account).scoped_to(:date)"}
 
       it 'should encapsulate each attr inside scope_to()' do
         send(:shoulda_scope_to_method, value).should eq expected
