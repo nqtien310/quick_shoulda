@@ -37,11 +37,24 @@ module QuickShoulda
         end
 
         def generate_shouldas(validation_type, attributes, options)
-          attributes.map { |attribute| generate_test_case(validation_type, attribute, options)}
+          attributes.map { |attribute| generate_shoulda(validation_type, attribute, options) }.flatten
         end
 
         def generate_shoulda(validation_type, attribute, options)
-          "it { should #{shoulda_matcher_method(validation_type)}(:#{attribute})#{shoulda_option_methods_chain(options)} }"
+          unless validation_type == 'format'
+            [ "it { should #{shoulda_matcher_method(validation_type)}(:#{attribute})#{shoulda_option_methods_chain(options)} }" ]
+          else
+            generate_shouldas_for_format_validation(attribute, options)
+          end
+        end
+
+        def generate_shouldas_for_format_validation(attribute, options)          
+          RandomString.generate(options[:with]).map { |type, strings| generate_allow_shouldas(type, strings, attribute) }.flatten
+        end
+
+        def generate_allow_shouldas(type, strings, attribute)
+          should_suffix = type == 'matched_strings' ? '' : '_not'
+          strings.map { |string| "it { should#{should_suffix} allow_value('#{string}').for(:#{attribute}) }" }
         end
 
         def shoulda_matcher_method(validation_type)

@@ -131,14 +131,29 @@ describe 'QuickShoulda::Generator::Validation' do
     end
   end
 
-  describe '#generate' do
-    let(:validation_type) { 'length' }
+  describe '#generate_shoulda' do
     let(:attribute) { :username }
-    let(:options) { {:minimum=>1, :maximum=>20} }
-    let(:expected) { 'it { should ensure_length_of(:username).is_at_least(1).is_at_most(20) }' }
 
-    it 'should return 1 complete shoulda test case' do
-      send(:generate_shoulda, validation_type, attribute, options).should eq expected
+    context 'format type' do
+      let(:validation_type) { 'format' }
+      let(:options) { {:format => /abc/i} }
+      let(:expected) { ["it { should allow_value('abc').for(:username) }"] }
+
+      before { should_receive(:generate_shouldas_for_format_validation).and_return(expected) }
+
+      it 'should return shouldas for format validation' do
+        send(:generate_shoulda, validation_type, attribute, options).should eq expected
+      end
+    end
+
+    context 'other types' do
+      let(:validation_type) { 'length' }
+      let(:options) { {:minimum=>1, :maximum=>20} }
+      let(:expected) { ['it { should ensure_length_of(:username).is_at_least(1).is_at_most(20) }'] }
+
+      it 'should return 1 complete shoulda test case' do
+        send(:generate_shoulda, validation_type, attribute, options).should eq expected
+      end
     end
   end
 
@@ -209,6 +224,47 @@ describe 'QuickShoulda::Generator::Validation' do
       it 'should encapsulate each attr inside scope_to()' do
         send(:shoulda_scope_to_method, value).should eq expected
       end
+    end
+  end
+
+  describe '#generate_allow_shouldas' do
+    context 'allow' do
+      let(:type) { 'matched_strings' }
+      let(:strings) do
+        ['nqtien310@gmail.com', 'nqtien310@hotdev.com']
+      end
+      let(:attr) { :email }
+      let(:expected) do
+        ["it { should allow_value('nqtien310@gmail.com').for(:#{attr}) }",
+         "it { should allow_value('nqtien310@hotdev.com').for(:#{attr}) }",   
+        ]
+      end
+
+      it 'should return full shoulda allow test cases' do
+        send(:generate_allow_shouldas, type, strings, attr).should eq expected
+      end
+    end
+  end
+
+  describe '#generate_shouldas_for_format_validation' do
+    let(:attr) { 'email' }
+    let(:matched_strings) { ['123','456'] }
+    let(:unmatched_strings) { ['abc'] }
+    let(:options) { {with: /123|456/ } }
+
+    let(:random_strings) {
+      {
+        matched_strings: matched_strings,
+        unmatched_strings: unmatched_strings
+      }
+    }
+
+    before { QuickShoulda::RandomString.should_receive(:generate).with(options[:with]).and_return(random_strings) }
+    after { send(:generate_shouldas_for_format_validation, attr, options) }
+
+    it 'should invoke generate_allow_shouldas for matched_strings and unmatched strings' do
+      should_receive(:generate_allow_shouldas).with(:matched_strings, matched_strings, attr)
+      should_receive(:generate_allow_shouldas).with(:unmatched_strings, unmatched_strings, attr)
     end
   end
 end
