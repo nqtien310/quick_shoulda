@@ -52,8 +52,8 @@ module QuickShoulda
           RandomString.generate(options[:with]).map { |type, strings| generate_allow_shouldas(type, strings, attribute) }.flatten
         end
 
-        def generate_allow_shouldas(type, strings, attribute)
-          should_suffix = type == 'matched_strings' ? '' : '_not'
+        def generate_allow_shouldas(type, strings, attribute)          
+          should_suffix = type.to_s == 'matched_strings' ? '' : '_not'
           strings.map { |string| "it { should#{should_suffix} allow_value('#{string}').for(:#{attribute}) }" }
         end
 

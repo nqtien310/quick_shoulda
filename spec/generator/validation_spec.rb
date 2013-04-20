@@ -3,7 +3,52 @@ require 'spec_helper'
 describe 'QuickShoulda::Generator::Validation' do
   include QuickShoulda::Generator::Validation
 
-  describe 'generate_for_validator' do
+  describe '#generate' do    
+    let(:attribute) { :student }
+
+    let(:presence_options) { {} }    
+    let(:uniqueness_options) { { scope: [:class, :college]} }    
+    let(:format_options) { { with: /abc/} }
+    let(:length_options) { { minimum: 1, maximum: 20}}
+
+    let(:random_strings) do
+      {
+        matched_strings: ['abc'],
+        unmatched_strings: ['nqtien310@gmail.com', 'nqtien310@hotdev.com']
+      }
+    end
+
+    ['presence', 'format', 'uniqueness', 'length'].each do | type |      
+      let("#{type}_validator_class") { mock("#{type}_validator_class".to_sym, to_s: "ActiveModel::Validations::#{type.upcase}Validator") }
+      let("#{type}_validator".to_sym) do        
+        mock("#{type}_validator".to_sym, :class => eval("#{type}_validator_class"), 
+                                    attributes: [attribute], options: eval("#{type}_options") )
+      end
+    end
+
+    let(:validators) { [presence_validator, uniqueness_validator, format_validator, length_validator] }
+    let(:model) { mock(:model, validators: validators) }
+
+
+    before { QuickShoulda::RandomString.should_receive(:generate).with(/abc/).and_return(random_strings) }
+
+    let(:expected) {
+      [
+        'it { should validate_presence_of(:student) }',        
+        'it { should validate_uniqueness_of(:student).scoped_to(:class).scoped_to(:college) }',
+        "it { should allow_value('abc').for(:student) }",
+        "it { should_not allow_value('nqtien310@gmail.com').for(:student) }",
+        "it { should_not allow_value('nqtien310@hotdev.com').for(:student) }",
+        "it { should ensure_length_of(:student).is_at_least(1).is_at_most(20) }"        
+      ]
+    }
+
+    it 'should return exact array of strings' do      
+      generate(model).should eq expected
+    end
+  end
+
+  describe '#generate_for_validator' do
     before { should_receive(:validation_type).and_return(expected_type) }
 
     let(:attributes) { [:username, :email] }
