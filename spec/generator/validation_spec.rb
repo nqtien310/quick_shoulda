@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'QuickShoulda::Generator::Validation' do
   include QuickShoulda::Generator::Validation
 
-  describe 'generate_test_cases_for_validator' do
+  describe 'generate_for_validator' do
     before { should_receive(:validation_type).and_return(expected_type) }
 
     let(:attributes) { [:username, :email] }
@@ -11,9 +11,9 @@ describe 'QuickShoulda::Generator::Validation' do
     let(:validator) { mock(:validator, :attributes => attributes, :options => options) }
     let(:expected_type) { 'length' }
 
-    it 'should invoke generate_test_cases with valid parameters' do
-      should_receive(:generate_test_cases).with(expected_type, attributes, options)
-      send(:generate_test_cases_for_validator, validator)
+    it 'should invoke generate_shouldas valid parameters' do
+      should_receive(:generate_shouldas).with(expected_type, attributes, options)
+      send(:generate_for_validator, validator)
     end
   end
 
@@ -65,7 +65,7 @@ describe 'QuickShoulda::Generator::Validation' do
 
   describe '#shoulda_option_method' do
     context 'cannot look up for option method' do
-      before { should_receive(:option_method).and_return(nil) }
+      before { should_receive(:shoulda_option_method_name).and_return(nil) }
       it 'should return nil' do
         send(:shoulda_option_method, nil, nil).should be_nil
       end
@@ -74,18 +74,18 @@ describe 'QuickShoulda::Generator::Validation' do
     context 'can look up for option method' do
       let(:value) { 'value' }
       context 'scope_to option method' do
-        before { should_receive(:option_method).and_return('scope_to') }
+        before { should_receive(:shoulda_option_method_name).and_return('scope_to') }
         it 'should invoke #scope_to' do
-          should_receive(:scope_to).with(value).once
+          should_receive(:shoulda_scope_to_method).with(value).once
           send(:shoulda_option_method, nil, value)
         end
       end
 
       context 'other option method' do
         let(:method) { 'is_at_least' }
-        before { should_receive(:option_method).and_return(method) }
+        before { should_receive(:shoulda_option_method_name).and_return(method) }
         it 'should invoke #normal_method' do
-          should_receive(:normal_method).with(method, value)
+          should_receive(:shoulda_normal_option_method).with(method, value)
           send(:shoulda_option_method, nil, value)
         end
       end
@@ -99,14 +99,14 @@ describe 'QuickShoulda::Generator::Validation' do
     before { should_receive(:option_value).with(value).and_return('(50)') }
 
     it 'should return a text contain both method and value' do
-      send(:normal_method, method, value).should eq expected
+      send(:shoulda_normal_option_method, method, value).should eq expected
     end
   end
 
-  describe '#shoulda_options' do
+  describe '#shoulda_option_methods_chain' do
     context 'no options given' do
       it 'should return ""' do
-        send(:shoulda_options,{}).should be_empty
+        send(:shoulda_option_methods_chain,{}).should be_empty
       end
     end
 
@@ -116,7 +116,7 @@ describe 'QuickShoulda::Generator::Validation' do
           let(:options) { {:minimum=>1, :maximum11=>20} }
           let(:expected) { ".is_at_least(1)" }
           it 'should return shoulda option methods corresponded with given options exclude the invalid option' do
-            send(:shoulda_options, options).should eq expected
+            send(:shoulda_option_methods_chain, options).should eq expected
           end
         end
 
@@ -124,7 +124,7 @@ describe 'QuickShoulda::Generator::Validation' do
           let(:options) { {:minimum=>1, :maximum=>20} }
           let(:expected) { ".is_at_least(1).is_at_most(20)" }
           it 'should return shoulda option methods corresponded with given options' do
-            send(:shoulda_options, options).should eq expected
+            send(:shoulda_option_methods_chain, options).should eq expected
           end
         end
       end
@@ -138,18 +138,18 @@ describe 'QuickShoulda::Generator::Validation' do
     let(:expected) { 'it { should ensure_length_of(:username).is_at_least(1).is_at_most(20) }' }
 
     it 'should return 1 complete shoulda test case' do
-      send(:generate_test_case, validation_type, attribute, options).should eq expected
+      send(:generate_shoulda, validation_type, attribute, options).should eq expected
     end
   end
 
-  describe "#option_method" do
+  describe "#shoulda_option_method_name" do
     context 'rails validate option is mapped to a shoulda method' do
       let(:option) { :minimum }
       let(:expected) { 'is_at_least' }
       let(:value) { '' }
 
       it 'should return the mapped shoulda method' do
-        send(:option_method, option, value).should eq expected
+        send(:shoulda_option_method_name, option, value).should eq expected
       end
     end
 
@@ -160,7 +160,7 @@ describe 'QuickShoulda::Generator::Validation' do
         let(:expected) { 'in_range' }
 
         it 'should return the mapped shoulda method' do
-          send(:option_method, option, value).should eq expected
+          send(:shoulda_option_method_name, option, value).should eq expected
         end
       end
 
@@ -169,7 +169,7 @@ describe 'QuickShoulda::Generator::Validation' do
         let(:value) { 'abcdef' }        
 
         it 'should return nil' do
-          send(:option_method, option, value).should be_nil
+          send(:shoulda_option_method_name, option, value).should be_nil
         end
       end
     end
@@ -193,12 +193,12 @@ describe 'QuickShoulda::Generator::Validation' do
     end
   end
 
-  describe '#scope_to' do
+  describe '#shoulda_scope_to_method' do
     context 'single attr' do
       let(:value) { :username }
       let(:expected) { ".scope_to(:username)" }
       it 'should encapsulate attr inside scope_to()' do
-        send(:scope_to, value).should eq expected
+        send(:shoulda_scope_to_method, value).should eq expected
       end
     end
 
@@ -207,7 +207,7 @@ describe 'QuickShoulda::Generator::Validation' do
       let(:expected) { ".scope_to(:account).scope_to(:date)"}
 
       it 'should encapsulate each attr inside scope_to()' do
-        send(:scope_to, value).should eq expected
+        send(:shoulda_scope_to_method, value).should eq expected
       end
     end
   end

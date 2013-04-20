@@ -18,14 +18,14 @@ module QuickShoulda
         :within     => InclusionOptions
       }
 
-      def generate_test_cases_for_model(model)
-        model.validators.each { |validator| generate_test_cases_for_validator(validator) }
+      def generate(model)
+        model.validators.each { |validator| generate_for_validator(validator) }
       end
 
       private
-        def generate_test_cases_for_validator(validator)
+        def generate_for_validator(validator)
           if validation_type = validation_type(validator)
-            generate_test_cases(validation_type, validator.attributes, validator.options)
+            generate_shouldas(validation_type, validator.attributes, validator.options)
           end
         end
 
@@ -34,12 +34,12 @@ module QuickShoulda
           validation_type.first.first.downcase unless validation_type.empty?
         end
 
-        def generate_test_cases(validation_type, attributes, options)
+        def generate_shouldas(validation_type, attributes, options)
           attributes.map { |attribute| generate_test_case(validation_type, attribute, options)}
         end
 
-        def generate_test_case(validation_type, attribute, options)
-          "it { should #{shoulda_matcher_method(validation_type)}(:#{attribute})#{shoulda_options(options)} }"
+        def generate_shoulda(validation_type, attribute, options)
+          "it { should #{shoulda_matcher_method(validation_type)}(:#{attribute})#{shoulda_option_methods_chain(options)} }"
         end
 
         def shoulda_matcher_method(validation_type)
@@ -47,30 +47,37 @@ module QuickShoulda
           "#{prefix}_#{validation_type}_of"
         end
 
-        def shoulda_options(options)
+        #.is_at_least(50).is_at_max(100)
+        def shoulda_option_methods_chain(options)
           options.map { |option, value| shoulda_option_method(option, value) }.compact.join
         end
-
+        
         def shoulda_option_method(option, value)
-          method = option_method(option, value)          
-          method == OptionMethods[:scope] ? scope_to(value) : normal_method(method, value) if method
+          method = shoulda_option_method_name(option, value)          
+          method == OptionMethods[:scope] ? shoulda_scope_to_method(value) : shoulda_normal_option_method(method, value) if method
         end
 
-        def option_method(option, value)
+        #.is_at_least
+        #.is_at_most
+        def shoulda_option_method_name(option, value)
           option_method = OptionMethods[option.to_sym]
           option_method = option_method[value.class.to_s.downcase.to_sym] if option_method.is_a?(Hash)
           option_method
         end
 
-        def normal_method(method, value)          
+        #.is_at_least(50)        
+        def shoulda_normal_option_method(method, value)          
           ".#{method}#{option_value(value)}"
         end
 
-        def scope_to(value)
+        #.scoped_to(:username).scoped_to(:account)
+        def shoulda_scope_to_method(value)
           method = OptionMethods[:scope]
           ([] << value).flatten.map { | v | ".#{method}(:#{v})" }.join
         end
 
+        #(50)
+        #('value')
         def option_value(value)
           value.is_a?(String) ? "('#{value}')" : "(#{value})"
         end
