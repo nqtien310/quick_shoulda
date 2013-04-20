@@ -10,6 +10,8 @@ describe 'QuickShoulda::Generator::Validation' do
     let(:uniqueness_options) { { scope: [:class, :college]} }    
     let(:format_options) { { with: /abc/} }
     let(:length_options) { { minimum: 1, maximum: 20}}
+    let(:inclusion_options) { { within: (1..20)} }
+    let(:exclusion_options) { { in: ['a', 'b', 'c']} }
 
     let(:random_strings) do
       {
@@ -18,7 +20,7 @@ describe 'QuickShoulda::Generator::Validation' do
       }
     end
 
-    ['presence', 'format', 'uniqueness', 'length'].each do | type |      
+    ['presence', 'format', 'uniqueness', 'length', 'inclusion', 'exclusion'].each do | type |      
       let("#{type}_validator_class") { mock("#{type}_validator_class".to_sym, to_s: "ActiveModel::Validations::#{type.upcase}Validator") }
       let("#{type}_validator".to_sym) do        
         mock("#{type}_validator".to_sym, :class => eval("#{type}_validator_class"), 
@@ -26,7 +28,8 @@ describe 'QuickShoulda::Generator::Validation' do
       end
     end
 
-    let(:validators) { [presence_validator, uniqueness_validator, format_validator, length_validator] }
+    let(:validators) { [presence_validator, uniqueness_validator, format_validator, length_validator, 
+                    inclusion_validator, exclusion_validator] }
     let(:model) { mock(:model, validators: validators) }
 
     before { QuickShoulda::RandomString.should_receive(:generate).with(/abc/).and_return(random_strings) }
@@ -38,7 +41,9 @@ describe 'QuickShoulda::Generator::Validation' do
         "it { should allow_value('abc').for(:student) }",
         "it { should_not allow_value('nqtien310@gmail.com').for(:student) }",
         "it { should_not allow_value('nqtien310@hotdev.com').for(:student) }",
-        "it { should ensure_length_of(:student).is_at_least(1).is_at_most(20) }"        
+        "it { should ensure_length_of(:student).is_at_least(1).is_at_most(20) }",
+        "it { should ensure_inclusion_of(:student).in_range(1..20) }",
+        'it { should ensure_exclusion_of(:student).in_array(["a", "b", "c"]) }'
       ]
     }
 
