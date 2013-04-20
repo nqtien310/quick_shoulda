@@ -1,6 +1,7 @@
 module QuickShoulda
 	class RandomString
 		class << self
+			Size = 3
 			LowerCaseChars = ('a'..'z').to_a
 			UpperCaseChars = ('A'..'Z').to_a
 			Digits 				 = (0..9).to_a
@@ -24,33 +25,27 @@ module QuickShoulda
 			def random_strings(base)
 				(1..30).map { |length| length.times.inject('') { |initial, n| initial + base[rand(10)].to_s } }
 			end
-		end
 
-		attr_accessor :pattern
+			def generate(pattern)
+				matched_strings = []
+				unmatched_strings = []
+				RandomString.sample_strings.each do |sample_string|
+					break if matched_strings.size == Size && unmatched_strings.size == Size
 
-		Size = 3
-		
-		def initialize(pattern)
-			@pattern = pattern
-		end
-
-		def generate			
-			matched_strings = []
-			unmatched_strings = []
-			RandomString.sample_strings.each do |sample_string|
-				break if matched_strings.size == Size && unmatched_strings.size == Size
-
-				if sample_string =~ pattern
-					matched_strings << sample_string if matched_strings.size < Size
-				else
-					unmatched_strings << sample_string if unmatched_strings.size < Size
+					if sample_string =~ pattern
+						matched_strings << sample_string if matched_strings.size < Size
+					else
+						unmatched_strings << sample_string if unmatched_strings.size < Size
+					end
 				end
+
+				{
+					matched_strings:   matched_strings,
+					unmatched_strings: unmatched_strings
+				}
 			end
 
-			{
-				matched_strings:   matched_strings,
-				unmatched_strings: unmatched_strings
-			}
+			alias_method :gen, :generate
 		end
 	end
 end

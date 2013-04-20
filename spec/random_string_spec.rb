@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 describe "QuickShoulda::RandomString" do
-	subject { QuickShoulda::RandomString.new(pattern) }
+	subject { QuickShoulda::RandomString }
 
 	describe ".stored_strings"	do
 		it 'should return an array of string' do
-			QuickShoulda::RandomString.stored_strings.should be_an Array
+			subject.stored_strings.should be_an Array
 		end
 	end
 
 	describe '.random_digits' do
 		it 'should return array of different length digits' do
-			random_digits = QuickShoulda::RandomString.random_digits_strings
+			random_digits = subject.random_digits_strings
 			random_digits.should be_an Array
 			random_digits.each do |random_str|
 				(random_str =~ /[0-9]+/).should_not be_nil
@@ -21,7 +21,7 @@ describe "QuickShoulda::RandomString" do
 
 	describe '.random_chars' do
 		it 'should return array of different length characters' do
-			random_chars = QuickShoulda::RandomString.random_chars_strings
+			random_chars = subject.random_chars_strings
 			random_chars.should be_an Array
 			random_chars.each do |random_str|
 				(random_str =~ /[a-zA-Z]+/).should_not be_nil
@@ -30,7 +30,9 @@ describe "QuickShoulda::RandomString" do
 	end
 
 	describe '#generate' do
-		before { QuickShoulda::RandomString.should_receive(:sample_strings).and_return(sample_strings) }
+		let(:pattern) { /^[a-z0-9_\.]+@[a-z]+\.[a-z]+$/i }
+
+		before { subject.should_receive(:sample_strings).and_return(sample_strings) }
 		context 'only matches strings' do
 			let(:sample_strings) {
 				[
@@ -46,7 +48,7 @@ describe "QuickShoulda::RandomString" do
 			end
 
 			it 'should return matches string' do
-				subject.generate.should eq expected
+				subject.gen(pattern).should eq expected
 			end
 		end
 
@@ -65,7 +67,7 @@ describe "QuickShoulda::RandomString" do
 			end
 
 			it 'should return matches string' do
-				subject.generate.should eq expected
+				subject.gen(pattern).should eq expected
 			end
 		end
 
@@ -84,7 +86,7 @@ describe "QuickShoulda::RandomString" do
 			end
 
 			it 'should return matches string' do
-				subject.generate.should eq expected
+				subject.gen(pattern).should eq expected
 			end
 		end
 	end
