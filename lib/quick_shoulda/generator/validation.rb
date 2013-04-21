@@ -9,16 +9,17 @@ module QuickShoulda
       }
 
       OptionMethods = {
-        :minimum      => 'is_at_least',
-        :maximum      => 'is_at_most',
-        :is           => 'is_equal_to',
-        :scope        => 'scoped_to',
-        :too_short    => 'with_short_message',
-        :too_long     => 'with_long_message',
-        :message      => 'with_message',        
-        :only_integer => 'only_integer',
-        :in           => InclusionOptions,
-        :within       => InclusionOptions
+        :minimum          => 'is_at_least',
+        :maximum          => 'is_at_most',
+        :is               => 'is_equal_to',
+        :scope            => 'scoped_to',
+        :too_short        => 'with_short_message',
+        :too_long         => 'with_long_message',
+        :message          => 'with_message',        
+        :only_integer     => 'only_integer',
+        :case_insensitive => 'case_insensitive',
+        :in               => InclusionOptions,
+        :within           => InclusionOptions
       }
 
       def generate(model)
@@ -75,8 +76,8 @@ module QuickShoulda
           case method
             when OptionMethods[:scope] 
               shoulda_scope_to_method(value)
-            when OptionMethods[:only_integer]
-              shoulda_only_integer_method
+            when OptionMethods[:only_integer], OptionMethods[:case_insensitive]
+              shoulda_method_without_value(method)
             else 
               shoulda_normal_option_method(method, value)
             end          
@@ -95,8 +96,8 @@ module QuickShoulda
           ".#{method}#{option_value(value)}"
         end
 
-        def shoulda_only_integer_method
-          ".only_integer"
+        def shoulda_method_without_value(method)
+          ".#{method}"
         end
 
         #.scoped_to(:username).scoped_to(:account)
