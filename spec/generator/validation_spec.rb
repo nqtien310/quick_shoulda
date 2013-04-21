@@ -122,6 +122,7 @@ describe 'QuickShoulda::Generator::Validation' do
 
     context 'can look up for option method' do
       let(:value) { 'value' }
+
       context 'scope_to option method' do
         before { should_receive(:shoulda_option_method_name).and_return('scoped_to') }
 
@@ -131,10 +132,20 @@ describe 'QuickShoulda::Generator::Validation' do
         end
       end
 
+      context 'only_integer method' do
+        before { should_receive(:shoulda_option_method_name).and_return('only_integer') }
+
+        it 'should invoke #only_integer' do
+          should_receive(:shoulda_only_integer_method).once
+          send(:shoulda_option_method, nil, value)
+        end
+      end
+
       context 'other option method' do
         let(:method) { 'is_at_least' }
+
         before { should_receive(:shoulda_option_method_name).and_return(method) }
-        it 'should invoke #normal_method' do
+        it 'should invoke #shoulda_normal_option_method' do
           should_receive(:shoulda_normal_option_method).with(method, value)
           send(:shoulda_option_method, nil, value)
         end
@@ -142,7 +153,7 @@ describe 'QuickShoulda::Generator::Validation' do
     end
   end
 
-  describe '#normal_method' do
+  describe '#shoulda_normal_option_method' do
     let(:method) { 'is_at_least'}
     let(:value) { 50 }
     let(:expected) { '.is_at_least(50)' }

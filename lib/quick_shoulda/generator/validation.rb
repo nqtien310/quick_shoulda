@@ -1,4 +1,4 @@
-require 'quick_shoulda/random_string'
+  require 'quick_shoulda/random_string'
 
 module QuickShoulda
   module Generator
@@ -9,15 +9,16 @@ module QuickShoulda
       }
 
       OptionMethods = {
-        :minimum    => 'is_at_least',
-        :maximum    => 'is_at_most',
-        :is         => 'is_equal_to',
-        :scope      => 'scoped_to',
-        :too_short  => 'with_short_message',
-        :too_long   => 'with_long_message',
-        :message    => 'with_message',        
-        :in         => InclusionOptions,
-        :within     => InclusionOptions
+        :minimum      => 'is_at_least',
+        :maximum      => 'is_at_most',
+        :is           => 'is_equal_to',
+        :scope        => 'scoped_to',
+        :too_short    => 'with_short_message',
+        :too_long     => 'with_long_message',
+        :message      => 'with_message',        
+        :only_integer => 'only_integer',
+        :in           => InclusionOptions,
+        :within       => InclusionOptions
       }
 
       def generate(model)
@@ -63,13 +64,22 @@ module QuickShoulda
         end
 
         #.is_at_least(50).is_at_max(100)
-        def shoulda_option_methods_chain(options)
+        def shoulda_option_methods_chain(options)          
           options.map { |option, value| shoulda_option_method(option, value) }.compact.join
         end
         
-        def shoulda_option_method(option, value)
+        def shoulda_option_method(option, value)          
           method = shoulda_option_method_name(option, value)          
-          method == OptionMethods[:scope] ? shoulda_scope_to_method(value) : shoulda_normal_option_method(method, value) if method
+          return unless method
+
+          case method
+            when OptionMethods[:scope] 
+              shoulda_scope_to_method(value)
+            when OptionMethods[:only_integer]
+              shoulda_only_integer_method
+            else 
+              shoulda_normal_option_method(method, value)
+            end          
         end
 
         #.is_at_least
@@ -81,8 +91,12 @@ module QuickShoulda
         end
 
         #.is_at_least(50)        
-        def shoulda_normal_option_method(method, value)          
+        def shoulda_normal_option_method(method, value)
           ".#{method}#{option_value(value)}"
+        end
+
+        def shoulda_only_integer_method
+          ".only_integer"
         end
 
         #.scoped_to(:username).scoped_to(:account)
