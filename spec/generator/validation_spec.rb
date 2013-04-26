@@ -10,7 +10,7 @@ describe 'QuickShoulda::Generator::Validation' do
     let(:uniqueness_options) { { scope: [:class, :college]} }    
     let(:format_options) { { with: /abc/} }
     let(:length_options) { { minimum: 1, maximum: 20}}
-    let(:inclusion_options) { { within: (1..20)} }
+    let(:inclusion_options) { { within: (1..20), :allow_nil => true, :allow_blank => true} }
     let(:exclusion_options) { { in: ['a', 'b', 'c']} }
     let(:numericality_options) { { only_integer: true, message: 'must be an integer' } }
 
@@ -43,7 +43,7 @@ describe 'QuickShoulda::Generator::Validation' do
         "it { should_not allow_value('nqtien310@gmail.com').for(:student) }",
         "it { should_not allow_value('nqtien310@hotdev.com').for(:student) }",
         "it { should ensure_length_of(:student).is_at_least(1).is_at_most(20) }",
-        "it { should ensure_inclusion_of(:student).in_range(1..20) }",
+        "it { should ensure_inclusion_of(:student).in_range(1..20).allow_nil(true).allow_blank(true) }",
         'it { should ensure_exclusion_of(:student).in_array(["a", "b", "c"]) }',
         "it { should validate_numericality_of(:student).only_integer.with_message('must be an integer') }"
       ]

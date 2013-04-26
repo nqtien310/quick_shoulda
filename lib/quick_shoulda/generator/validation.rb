@@ -18,6 +18,8 @@ module QuickShoulda
         :message          => 'with_message',        
         :only_integer     => 'only_integer',
         :case_insensitive => 'case_insensitive',
+        :allow_nil        => 'allow_nil',
+        :allow_blank      => 'allow_blank',        
         :in               => InclusionOptions,
         :within           => InclusionOptions
       }
@@ -27,6 +29,7 @@ module QuickShoulda
       end
 
       private
+
         def generate_for_validator(validator)
           if validation_type = validation_type(validator)
             generate_shouldas(validation_type, validator.attributes, validator.options)
