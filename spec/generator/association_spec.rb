@@ -9,20 +9,21 @@ describe 'QuickShoulda::Generator::Association' do
 
   describe 'generate_for_association' do
     let(:association) do
-      mock(:association, :macro => :has_many, 
-                         :name => :friendly_users, 
+      mock(:association, :macro => :belongs_to, 
+                         :name => :friendly_user, 
                          :options => options )
     end
     let(:options) { 
       {
-        :dependent  => :destroy,
-        :class_name => 'User',
-        :order      => 'users.email DESC'
+        :dependent   => :destroy,
+        :class_name  => 'User',
+        :order       => 'users.email DESC',
+        :foreign_key => 'friendly_user_id'
       }
     }
 
     let(:expected) do
-      "it { should have_many(:friendly_users).dependent('destroy').class_name('User').order('users.email DESC') }"
+      "it { should belong_to(:friendly_user).dependent(:destroy).class_name(:User).order('users.email DESC').with_foreign_key(:friendly_user_id) }"
     end
 
     it 'should return valid shoulda test case' do
@@ -34,7 +35,7 @@ describe 'QuickShoulda::Generator::Association' do
     context 'option exists in predefined OptionMethods' do
       let(:option) { 'dependent' }
       let(:value) { 'destroy' }
-      let(:expected) { ".dependent('destroy')" }
+      let(:expected) { ".dependent(:destroy)" }
 
       it 'should return valid shoulda option method with value' do
         send(:shoulda_option_method_with_value, option, value).should eq expected

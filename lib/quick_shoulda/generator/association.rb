@@ -9,12 +9,13 @@ module QuickShoulda
       }
 
       OptionMethods = {
-        :dependent  => 'dependent',
-        :through    => 'through',
-        :class_name => 'class_name',
-        :touch      => 'touch',
-        :validate   => 'validate',
-        :order      => 'order'
+        :dependent   => 'dependent',
+        :through     => 'through',
+        :class_name  => 'class_name',
+        :touch       => 'touch',
+        :validate    => 'validate',
+        :order       => 'order',
+        :foreign_key => 'with_foreign_key'
       }
 
       def generate(model)
@@ -35,8 +36,9 @@ module QuickShoulda
         end
 
         def shoulda_option_method_with_value(option, value)    
-          method_name = OptionMethods[option.to_sym]      
-          ".#{method_name}('#{value}')" if method_name
+          method_name = OptionMethods[option.to_sym]
+          value = method_name == 'order' ? "'#{value}'" : ":#{value}"
+          ".#{method_name}(#{value})" if method_name
         end
     end
   end
