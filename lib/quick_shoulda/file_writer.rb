@@ -2,6 +2,7 @@ require 'quick_shoulda/errors'
 
 module QuickShoulda
 	class FileWriter
+		DescribeRegex = /^describe\s.+\sdo$/i
 		AssociationsBlock = "describe '#Associations' do"
 		ValidationsBlock = "describe '#Validations' do"
 
@@ -14,15 +15,43 @@ module QuickShoulda
 			@file_path = file_path					
 		end
 
-		def clear_block(block_name)			
+		def write_block(block_name, shoulda_lines)
+			shoulda_content = shoulda_content(block_name, shoulda_lines)
+			file_content = ''
+			
+			File.open(test_file_path, 'a+') do |file|				
+				inserted = false
+				while( line = file.gets )
+					file_content << line										
+					if !inserted && line.strip.gsub(/[\t\n]/,'') =~ DescribeRegex						
+						file_content << shoulda_content
+						inserted = true
+					end
+				end				
+			end
+
+			File.open(test_file_path, 'w') { |file | file.write( file_content ) }
+		end
+
+		def shoulda_content(block_name, shoulda_lines)
+			block = Blocks[block_name.to_sym]
+			shoulda_lines.map! { |line| "\t#{line}"}
+			shoulda_lines.insert(0, "#{block}")
+			shoulda_lines << "end"
+
+			shoulda_lines.map { |line| "\t#{line}"}.join("\n")	
+		end
+
+		def clear_block(block_name)
 			raise Errors::FileDoesNotExistError unless File.file? test_file_path
 
-			File.open(test_file_path, 'w+') do | file |
-				file_content = ""				
+			file_content = ""
+			File.open(test_file_path, 'r') do | file |
+				
 				delete_mode = false
 				block = Blocks[block_name.to_sym]
 
-				while( line = file.gets )				
+				while( line = file.gets )
 					filtered_line = line.gsub(/[\n\t]/,'')
 
 					if filtered_line == block || delete_mode
@@ -33,8 +62,9 @@ module QuickShoulda
 
 					file_content << line
 				end
-				file.write( file_content ) 
-			end			
+			end
+
+			File.open(test_file_path, 'w') { |file | file.write( file_content ) }
 		end
 
 		def test_file_path

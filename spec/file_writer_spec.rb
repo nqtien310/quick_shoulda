@@ -71,4 +71,31 @@ describe 'QuickShoulda::FileWriter' do
 			end
 		end
 	end
+
+	context '#write_block' do
+		before { @test_file_content = IO.read(file_path) }
+
+		after do
+			File.open(file_path, 'w') do |file|
+				file.write(@test_file_content)
+			end
+		end
+
+		let(:shoulda_lines) {
+			['it { should be_written }', 'it { should be_written_again }']
+		}
+
+		let(:file_path) { 'spec/fixtures/write_spec.rb' }
+
+		[:association, :validation].each do |block|
+			it "should write the whole #{block} block" do
+				subject.should_receive(:test_file_path).at_least(1).and_return(file_path)
+				subject.write_block(block, shoulda_lines)				
+
+				( IO.read(file_path) =~ /#{QuickShoulda::FileWriter::Blocks[block]}/ ).should_not be_nil
+				( IO.read(file_path) =~ /it { should be_written }/ ).should_not be_nil
+				( IO.read(file_path) =~ /it { should be_written_again }/ ).should_not be_nil
+			end
+		end
+	end	
 end
