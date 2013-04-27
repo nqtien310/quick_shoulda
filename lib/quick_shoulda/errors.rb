@@ -5,5 +5,11 @@ module QuickShoulda
 				super(msg)
 			end
 		end
+
+		class FileDoesNotExistError < StandardError
+			def initialize(msg = 'This file does not exist')
+				super(msg)
+			end
+		end
 	end
 end

@@ -4,6 +4,7 @@ describe 'QuickShoulda::FileWriter' do
 	subject { QuickShoulda::FileWriter.new(file_path) }
 
 	context 'test_file_path' do
+		before { File.stub(:file?).and_return(true) }
 		context 'valid file path' do
 			context 'without namespace' do
 				let(:file_path) { 'models/user.rb' }
@@ -47,6 +48,26 @@ describe 'QuickShoulda::FileWriter' do
 
 			it 'should raise Errors::InvalidPathError error' do
 				expect { subject.test_file_path }.to raise_error QuickShoulda::Errors::InvalidPathError
+			end
+		end
+	end
+
+	context '#clear_block' do
+		before { @test_file_content = IO.read(file_path) }
+
+		after do
+			File.open(file_path, 'w') do |file|
+				file.write(@test_file_content)				
+			end
+		end
+
+		let(:file_path) { 'spec/fixtures/user_spec.rb' }		
+
+		[:association, :validation].each do |block|
+			it "should clear the whole #{block} block" do
+				subject.should_receive(:test_file_path).and_return(file_path)
+				subject.clear_block(block)			
+				( IO.read(file_path) =~ /#{QuickShoulda::FileWriter::Blocks[block]}/ ).should be_nil
 			end
 		end
 	end
