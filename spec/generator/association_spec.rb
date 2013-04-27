@@ -3,10 +3,6 @@ require 'spec_helper'
 describe 'QuickShoulda::Generator::Association' do
   include QuickShoulda::Generator::Association
 
-  describe '#generate' do    
-  
-  end
-
   describe 'generate_for_association' do
     let(:association) do
       mock(:association, :macro => :belongs_to, 

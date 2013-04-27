@@ -1,4 +1,4 @@
-  require 'quick_shoulda/random_string'
+require 'quick_shoulda/random_string'
 
 module QuickShoulda
   module Generator
@@ -23,8 +23,8 @@ module QuickShoulda
         :in               => InclusionOptions,
         :within           => InclusionOptions
       }
-
-      def generate(model)
+      
+      def generate_validations(model)
         model.validators.map { |validator| generate_for_validator(validator) }.compact.flatten
       end
 

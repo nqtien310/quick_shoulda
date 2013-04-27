@@ -50,7 +50,7 @@ describe 'QuickShoulda::Generator::Validation' do
     }
 
     it 'should return exact array of strings' do      
-      generate(model).should eq expected
+      generate_validations(model).should eq expected
     end
   end
 

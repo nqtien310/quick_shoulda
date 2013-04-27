@@ -18,7 +18,7 @@ module QuickShoulda
         :foreign_key => 'with_foreign_key'
       }
 
-      def generate(model)
+      def generate_associations(model)
         model.reflect_on_all_associations.map { |association| generate_for_association(association) }.compact.flatten
       end
 
@@ -26,10 +26,10 @@ module QuickShoulda
 
         def generate_for_association(association)
           shoulda_method_name = MappedMacros[association.macro.to_sym]
-          "it { should #{shoulda_method_name}(:#{association.name})#{shoulda_option_methods_chain(association.options)} }"
+          "it { should #{shoulda_method_name}(:#{association.name})#{shoulda_assciation_option_methods_chain(association.options)} }"
         end
 
-        def shoulda_option_methods_chain(options)
+        def shoulda_assciation_option_methods_chain(options)
           options.map do |option, value|
             shoulda_option_method_with_value(option, value)
           end.compact.join
