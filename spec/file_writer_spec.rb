@@ -42,14 +42,6 @@ describe 'QuickShoulda::FileWriter' do
 				end
 			end
 		end
-
-		context 'invalid file path' do
-			let(:file_path) { 'models' }
-
-			it 'should raise Errors::InvalidPathError error' do
-				expect { subject.test_file_path }.to raise_error QuickShoulda::Errors::InvalidPathError
-			end
-		end
 	end
 
 	context '#clear_block' do

@@ -16,9 +16,7 @@ module QuickShoulda
 			@file_path = file_path					
 		end
 
-		def write_block(block_name, shoulda_lines)
-			raise Errors::FileDoesNotExistError unless File.file? test_file_path
-			
+		def write_block(block_name, shoulda_lines)			
 			shoulda_content = shoulda_content(block_name, shoulda_lines)
 			file_content = ''
 			
@@ -46,8 +44,6 @@ module QuickShoulda
 		end
 
 		def clear_block(block_name)
-			raise Errors::FileDoesNotExistError unless File.file? test_file_path
-
 			file_content = ""
 			File.open(test_file_path, 'r') do | file |
 				
@@ -75,9 +71,7 @@ module QuickShoulda
 		end
 
 		def _test_file_path
-			tokens = @file_path.split(/\/?models\//)
-			raise Errors::InvalidPathError if tokens.size <= 1
-			model_path = tokens[1]
+			model_path = @file_path.split(/\/?models\//)[1]			
 			file_name = "#{File.basename(model_path, ".rb")}_spec.rb"
 			dir_name = File.dirname(model_path) == '.' ? SpecFolder : "#{SpecFolder}#{File.dirname(model_path)}/"		
 			"#{dir_name}#{file_name}"
