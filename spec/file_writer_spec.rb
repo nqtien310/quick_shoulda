@@ -57,16 +57,16 @@ describe 'QuickShoulda::FileWriter' do
 
 		after do
 			File.open(file_path, 'w') do |file|
-				file.write(@test_file_content)				
+				file.write(@test_file_content)
 			end
 		end
 
-		let(:file_path) { 'spec/fixtures/user_spec.rb' }		
+		let(:file_path) { 'spec/fixtures/user_spec.rb' }
 
 		[:association, :validation].each do |block|
 			it "should clear the whole #{block} block" do
-				subject.should_receive(:test_file_path).and_return(file_path)
-				subject.clear_block(block)			
+				subject.should_receive(:test_file_path).at_least(1).and_return(file_path)
+				subject.clear_block(block)				
 				( IO.read(file_path) =~ /#{QuickShoulda::FileWriter::Blocks[block]}/ ).should be_nil
 			end
 		end
