@@ -11,5 +11,11 @@ module QuickShoulda
 				super(msg)
 			end
 		end
+
+		class NotAModelPathError < StandardError
+			def initialize(msg = 'file must located inside models directory')
+				super(msg)
+			end
+		end
 	end
 end
