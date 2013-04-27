@@ -16,6 +16,8 @@ module QuickShoulda
 		end
 
 		def write_block(block_name, shoulda_lines)
+			raise Errors::FileDoesNotExistError unless File.file? test_file_path
+			
 			shoulda_content = shoulda_content(block_name, shoulda_lines)
 			file_content = ''
 			

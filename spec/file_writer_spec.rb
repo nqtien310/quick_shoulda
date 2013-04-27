@@ -88,13 +88,16 @@ describe 'QuickShoulda::FileWriter' do
 		let(:file_path) { 'spec/fixtures/write_spec.rb' }
 
 		[:association, :validation].each do |block|
-			it "should write the whole #{block} block" do
-				subject.should_receive(:test_file_path).at_least(1).and_return(file_path)
-				subject.write_block(block, shoulda_lines)				
+			context "#{block}" do
+				let(:expected) do				
+					/\n\t#{QuickShoulda::FileWriter::Blocks[block]}\n\t\tit { should be_written }\n\t\tit { should be_written_again }\n\tend/
+				end
 
-				( IO.read(file_path) =~ /#{QuickShoulda::FileWriter::Blocks[block]}/ ).should_not be_nil
-				( IO.read(file_path) =~ /it { should be_written }/ ).should_not be_nil
-				( IO.read(file_path) =~ /it { should be_written_again }/ ).should_not be_nil
+				it "should write the whole #{block} block" do
+					subject.should_receive(:test_file_path).at_least(1).and_return(file_path)
+					subject.write_block(block, shoulda_lines)												
+					( IO.read(file_path) =~ expected ).should_not be_nil				
+				end
 			end
 		end
 	end	
