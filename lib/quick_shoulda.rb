@@ -1,5 +1,6 @@
 require "quick_shoulda/version"
 require "quick_shoulda/errors"
+require "quick_shoulda/file_writer"
 require "quick_shoulda/generator"
 require "quick_shoulda/path_resolver"
 
