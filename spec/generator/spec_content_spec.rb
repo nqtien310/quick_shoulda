@@ -14,7 +14,7 @@ describe 'QuickShoulda::Generator::SpecContent' do
 			exp = "\tdescribe '#Validations' do\n"
 			exp << "\t\t#{shoulda_lines[0]}\n"
 			exp << "\t\t#{shoulda_lines[1]}\n"
-			exp << "\tend"
+			exp << "\tend\n\n"
 			exp			
 		end
 

@@ -11,6 +11,10 @@ module QuickShoulda
 		end
 		
 		private
+			def spec_file_exist?
+				File.file? spec_file_path
+			end
+			
 			def _model_full_namespace
 				eval _model_full_namespace_in_str
 			end
