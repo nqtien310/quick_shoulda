@@ -19,10 +19,12 @@ describe 'QuickShoulda::FileWriter' do
 
 		let(:file_path) { 'spec/fixtures/user_spec.rb' }
 
-		[:association, :validation].each do |block|
-			it "should clear the whole #{block} block" do				
-				clear_block(block_describe_header(block))
-				( IO.read(file_path) =~ /#{block_describe_header(block)}/ ).should be_nil
+		[:association, :validation].each do |block_name|
+			it "should clear the whole #{block_name} block" do
+				block = block_describe_header(block_name)						
+				( IO.read(file_path) =~ /#{block}\n.+\n.+\n\tend/ ).should_not be_nil				
+				clear_block(block)
+				( IO.read(file_path) =~ /#{block}\n.+\n.+\n\tend/ ).should be_nil
 			end
 		end
 	end
@@ -49,7 +51,8 @@ describe 'QuickShoulda::FileWriter' do
 					/\n\t#{block_describe_header(block)}\n\t\tit { should be_written }\n\t\tit { should be_written_again }\n\tend/
 				end
 
-				it "should write the whole #{block} block" do					
+				it "should write the whole #{block} block" do
+					( IO.read(file_path) =~ expected ).should be_nil
 					write_block(shoulda_content(block, shoulda_lines))
 					( IO.read(file_path) =~ expected ).should_not be_nil				
 				end
