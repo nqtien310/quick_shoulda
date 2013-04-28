@@ -1,8 +1,7 @@
 require 'quick_shoulda/errors'
 
 module QuickShoulda
-	class FileWriter
-		SpecFolder = 'spec/'
+	module FileWriter		
 		DescribeRegex = /^describe\s.+\sdo$/i
 		AssociationsBlock = "describe '#Associations' do"
 		ValidationsBlock = "describe '#Validations' do"
@@ -12,15 +11,10 @@ module QuickShoulda
 			:validation => ValidationsBlock,
 		}
 
-		def initialize(file_path)
-			@file_path = file_path					
-		end
-
 		def write_block(block_name, shoulda_lines)			
 			shoulda_content = shoulda_content(block_name, shoulda_lines)
 			file_content = ''
-			
-			File.open(test_file_path, 'a+') do |file|				
+			File.open(spec_file_path, 'a+') do |file|				
 				inserted = false
 				while( line = file.gets )
 					file_content << line										
@@ -31,7 +25,7 @@ module QuickShoulda
 				end				
 			end
 
-			File.open(test_file_path, 'w') { |file | file.write( file_content ) }
+			File.open(spec_file_path, 'w') { |file | file.write( file_content ) }
 		end
 
 		def shoulda_content(block_name, shoulda_lines)
@@ -43,9 +37,15 @@ module QuickShoulda
 			shoulda_lines.map { |line| "\t#{line}"}.join("\n")	
 		end
 
+		def init_content(model_constant)
+			content = "require 'spec_helper'\n\n"
+			content << "describe '#{model_content}' do\n\n"
+			content << "end"
+		end
+
 		def clear_block(block_name)
 			file_content = ""
-			File.open(test_file_path, 'r') do | file |
+			File.open(spec_file_path, 'r') do | file |
 				
 				delete_mode = false
 				block = Blocks[block_name.to_sym]
@@ -63,18 +63,7 @@ module QuickShoulda
 				end
 			end
 
-			File.open(test_file_path, 'w') { |file | file.write( file_content ) }
-		end
-
-		def test_file_path
-			@test_file_path ||= _test_file_path
-		end
-
-		def _test_file_path
-			model_path = @file_path.split(/\/?models\//)[1]			
-			file_name = "#{File.basename(model_path, ".rb")}_spec.rb"
-			dir_name = File.dirname(model_path) == '.' ? SpecFolder : "#{SpecFolder}#{File.dirname(model_path)}/"		
-			"#{dir_name}#{file_name}"
-		end
+			File.open(spec_file_path, 'w') { |file | file.write( file_content ) }
+		end		
 	end
 end
