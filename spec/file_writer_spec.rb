@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe 'QuickShoulda::FileWriter' do
+	include QuickShoulda::Config
 	include QuickShoulda::Generator
 	include QuickShoulda::PathResolver
 	include QuickShoulda::FileWriter	

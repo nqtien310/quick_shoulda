@@ -7,11 +7,5 @@ module QuickShoulda
 		include Validation
 		include Association
 		include SpecContent
-
-		def self.included(base)
-			base.class_eval do
-				attr_accessor :validations_block, :associations_block
-			end
-		end
 	end
 end

@@ -4,13 +4,8 @@ module QuickShoulda
 	module PathResolver
 		include StringHelpers
 
-		def self.included(base)
-			base.class_eval do
-				attr_accessor :path, :model_full_namespace, :spec_file_path, :spec_folder
-			end
-		end
-		
 		private
+		
 			def spec_file_exist?
 				File.file? spec_file_path
 			end

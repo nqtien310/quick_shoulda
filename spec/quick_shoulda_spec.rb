@@ -35,7 +35,8 @@ describe 'QuickShoulda' do
 			File.delete(QuickShoulda.spec_file_path)
 		end
 
-		it 'should create a new file' do
+		it 'should create a new file' do			
+			IO.read(QuickShoulda.spec_file_path).should_not be_nil
 		end
 	end
 end
