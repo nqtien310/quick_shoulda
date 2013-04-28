@@ -18,7 +18,7 @@ module QuickShoulda
 			end
 		end
 		
-		class NotAModelPathError < StandardError
+		class NotRubyFileError < StandardError
 			def initialize(msg = 'Given file must have .rb extension')
 				super(msg)
 			end
