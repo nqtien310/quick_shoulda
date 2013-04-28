@@ -7,7 +7,6 @@ require "quick_shoulda/config"
 require 'fileutils'
 
 module QuickShoulda
-
 	class << self
 		include PathResolver		
 		include FileWriter
@@ -15,6 +14,7 @@ module QuickShoulda
 		include Config
 
 		def process(path, spec_folder = 'spec/')	
+			raise PathNotGivenError unless path
 			raise FileDoesNotExistError unless File.file?(path)
 			raise NotAModelPathError unless path =~ /models\//
 			raise NotRubyFileError unless File.extname(path) == '.rb'

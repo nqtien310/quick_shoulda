@@ -23,5 +23,11 @@ module QuickShoulda
 				super(msg)
 			end
 		end
+
+		class PathNotGivenError < StandardError
+			def initialize(msg = 'path to model file must be given')
+				super(msg)
+			end
+		end		
 	end
 end
