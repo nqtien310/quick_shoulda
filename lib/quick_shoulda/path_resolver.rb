@@ -10,8 +10,8 @@ module QuickShoulda
 				File.file? spec_file_path
 			end
 			
-			def _model_full_namespace
-				eval _model_full_namespace_in_str
+			def _model_full_namespace				
+				eval "::#{_model_full_namespace_in_str}"
 			end
 
 			def _spec_file_path

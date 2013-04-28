@@ -41,7 +41,7 @@ describe 'QuickShoulda::PathResolver' do
 		before { should_receive(:_model_full_namespace_in_str).and_return(model) }
 
 		it 'should return constant' do			
-			_model_full_namespace.should eq QuickShoulda::StringHelpers
+			_model_full_namespace.should eq ::QuickShoulda::StringHelpers
 		end
 	end
 
