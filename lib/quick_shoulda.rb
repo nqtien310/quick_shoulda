@@ -12,11 +12,12 @@ module QuickShoulda
 		include FileWriter
 		include Generator
 		include Config
-
+		include Errors
+		
 		def process(path, spec_folder = 'spec/')	
 			raise PathNotGivenError unless path
-			raise FileDoesNotExistError unless File.file?(path)
 			raise NotAModelPathError unless path =~ /models\//
+			raise FileDoesNotExistError unless File.file?(path)			
 			raise NotRubyFileError unless File.extname(path) == '.rb'
 			configure(path, spec_folder)
 
