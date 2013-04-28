@@ -14,7 +14,7 @@ module QuickShoulda
 				block = block_describe_header(block_name)
 				shoulda_lines.map! { |line| "\t#{line}"}
 				shoulda_lines.insert(0, "#{block}")
-				shoulda_lines << "end"
+				shoulda_lines << "end\n\n"
 
 				shoulda_lines.map { |line| "\t#{line}"}.join("\n")	
 			end
