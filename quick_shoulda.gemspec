@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = QuickShoulda::VERSION
   spec.authors       = ["Tien Nguyen"]
   spec.email         = ["nqtien310@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{Generate Shoulda testcases}
+  spec.summary       = %q{Generate Shoulda testcases}
   spec.homepage      = ""
   spec.license       = "MIT"
 
