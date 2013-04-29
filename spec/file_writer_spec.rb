@@ -1,10 +1,43 @@
 require 'spec_helper'
+require 'fileutils'
 
 describe 'QuickShoulda::FileWriter' do
-	include QuickShoulda::Config
+	include QuickShoulda::Main
 	include QuickShoulda::Generator
 	include QuickShoulda::PathResolver
 	include QuickShoulda::FileWriter	
+
+	context '#create_file_and_write_init_content' do
+		let(:spec_init_content) {
+			'spec init content'
+		}
+		let(:spec_file_path) {
+			File.expand_path('../test_written_folder/test_written_file.rb', __FILE__)
+		}
+
+		after do
+			File.delete spec_file_path
+			FileUtils.rm_r File.dirname(spec_file_path)
+		end
+
+		it 'should create folders which are in file path' do
+			File.should_not be_directory File.dirname(spec_file_path)
+			create_file_and_write_init_content
+			File.should be_directory File.dirname(spec_file_path)
+		end
+
+		it 'should create file' do			
+			File.should_not be_file spec_file_path
+			create_file_and_write_init_content
+			File.should be_file spec_file_path
+		end
+
+		it 'should write spec_init_content to file' do
+			File.should_not be_file spec_file_path
+			create_file_and_write_init_content
+			File.read(spec_file_path).should eq spec_init_content
+		end
+	end
 
 	context '#clear_block' do
 		before do

@@ -4,6 +4,13 @@ module QuickShoulda
 	module FileWriter		
 		DescribeRegex = /^describe\s.+\sdo$/i		
 
+		def create_file_and_write_init_content
+			FileUtils.mkdir_p(File.dirname(spec_file_path))
+			File.open(spec_file_path, 'w') do |file|
+				file.write(spec_init_content)
+			end
+		end
+
 		def write_block(shoulda_content)	
 			file_content = ''
 			File.open(spec_file_path, 'a+') do |file|				
