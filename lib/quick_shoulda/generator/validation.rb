@@ -27,6 +27,16 @@ module QuickShoulda
         :in               => InclusionOptions,
         :within           => InclusionOptions
       }
+
+      Filters = {
+        :allow_blank      => 'inclusion'
+      }
+
+      def self.included(base)
+        base.class_eval do
+          attr_accessor :validation_type
+        end
+      end
       
       def generate_validations(model)
         model.validators.map { |validator| generate_for_validator(validator) }.compact.flatten
@@ -35,12 +45,12 @@ module QuickShoulda
       private
 
         def generate_for_validator(validator)
-          if validation_type = validation_type(validator)
-            generate_shouldas(validation_type, validator.attributes, validator.options)
+          if @validation_type = _validation_type(validator)
+            generate_shouldas(validator.attributes, validator.options)
           end
         end
 
-        def validation_type(validator)
+        def _validation_type(validator)
           validation_type = validator.class.to_s.scan(/([^:]+)Validator/)
           unless validation_type.empty?
             validator = validation_type.first.first.downcase
@@ -48,13 +58,13 @@ module QuickShoulda
           end          
         end
 
-        def generate_shouldas(validation_type, attributes, options)
-          attributes.map { |attribute| generate_shoulda(validation_type, attribute, options) }.flatten
+        def generate_shouldas(attributes, options)
+          attributes.map { |attribute| generate_shoulda(attribute, options) }.flatten
         end
 
-        def generate_shoulda(validation_type, attribute, options)
+        def generate_shoulda(attribute, options)
           unless validation_type == 'format'
-            [ "it { should #{shoulda_matcher_method(validation_type)}(:#{attribute})#{shoulda_option_methods_chain(options)} }" ]
+            [ "it { should #{shoulda_matcher_method}(:#{attribute})#{shoulda_option_methods_chain(options)} }" ]
           else
             generate_shouldas_for_format_validation(attribute, options)
           end
@@ -69,13 +79,13 @@ module QuickShoulda
           strings.map { |string| "it { should#{should_suffix} allow_value('#{string}').for(:#{attribute}) }" }
         end
 
-        def shoulda_matcher_method(validation_type)
+        def shoulda_matcher_method
           prefix = ('exclusion|inclusion|length' =~ /#{validation_type}/) ? 'ensure' : 'validate'
           "#{prefix}_#{validation_type}_of"
         end
 
         #.is_at_least(50).is_at_max(100)
-        def shoulda_option_methods_chain(options)          
+        def shoulda_option_methods_chain(options)
           options.map { |option, value| shoulda_option_method(option, value) }.compact.join
         end
         
@@ -96,9 +106,14 @@ module QuickShoulda
         #.is_at_least
         #.is_at_most
         def shoulda_option_method_name(option, value)
+          return unless pass_filter?(option)
           option_method = OptionMethods[option.to_sym]
           option_method = option_method[value.class.to_s.downcase.to_sym] if option_method.is_a?(Hash)
           option_method
+        end
+
+        def pass_filter?(option)
+          !Filters[option.to_sym] || Filters[option.to_sym] == validation_type
         end
 
         #.is_at_least(50)        

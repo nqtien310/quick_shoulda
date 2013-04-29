@@ -55,7 +55,7 @@ describe 'QuickShoulda::Generator::Validation' do
   end
 
   describe '#generate_for_validator' do
-    before { should_receive(:validation_type).and_return(expected_type) }
+    before { should_receive(:_validation_type).and_return(expected_type) }
 
     let(:attributes) { [:username, :email] }
     let(:options) { {:minimum => 100, :maximum => 200} }
@@ -63,12 +63,18 @@ describe 'QuickShoulda::Generator::Validation' do
     let(:expected_type) { 'length' }
 
     it 'should invoke generate_shouldas valid parameters' do
-      should_receive(:generate_shouldas).with(expected_type, attributes, options)
+      should_receive(:generate_shouldas).with(attributes, options)
       send(:generate_for_validator, validator)
-    end
+    end  
+
+    it 'should assign value to validation_type attr_accessor' do
+      validation_type.should be_nil
+      send(:generate_for_validator, validator)      
+      validation_type.should eq expected_type
+    end  
   end
 
-  describe '#validation_type' do
+  describe '#_validation_type' do
     let(:validator_class) { mock(:validator_class, :to_s => validator_class_name) }
     let(:validator) { mock(:validator, :class => validator_class) }
     let(:expected_type) { 'length' }
@@ -77,7 +83,7 @@ describe 'QuickShoulda::Generator::Validation' do
       let(:validator_class_name) { 'ActiveModel::Validations::LengthValidator' }
 
       it 'should return expected_type' do
-        send(:validation_type, validator).should eq expected_type
+        send(:_validation_type, validator).should eq expected_type
       end
     end
 
@@ -85,7 +91,7 @@ describe 'QuickShoulda::Generator::Validation' do
       let(:validator_class_name) { 'ActiveModel::Validations::LengthValidatoErrorr' }
 
       it 'should return nil' do
-        send(:validation_type, validator).should be_nil
+        send(:_validation_type, validator).should be_nil
       end
     end
 
@@ -93,7 +99,7 @@ describe 'QuickShoulda::Generator::Validation' do
       let(:validator_class_name) { 'ActiveModel::Validations::EmailValidator' }
 
       it 'should return nil' do
-        send(:validation_type, validator).should be_nil
+        send(:_validation_type, validator).should be_nil
       end
     end
   end
@@ -104,7 +110,8 @@ describe 'QuickShoulda::Generator::Validation' do
         context "validate #{type}" do
           let(:expected) { "ensure_#{type}_of" }
           it "should return ensure_#{type}_of" do
-            send(:shoulda_matcher_method, type).should == expected
+            should_receive(:validation_type).at_least(1).and_return(type)
+            send(:shoulda_matcher_method).should == expected
           end
         end
       end
@@ -115,7 +122,8 @@ describe 'QuickShoulda::Generator::Validation' do
         context "validate #{type}" do
           let(:expected) { "validate_#{type}_of" }
           it "should return validate_#{type}_of" do
-            send(:shoulda_matcher_method, type).should == expected
+            should_receive(:validation_type).at_least(1).and_return(type)
+            send(:shoulda_matcher_method).should == expected
           end
         end
       end
@@ -207,57 +215,73 @@ describe 'QuickShoulda::Generator::Validation' do
     let(:attribute) { :username }
 
     context 'format type' do
-      let(:validation_type) { 'format' }
+      let(:type) { 'format' }
       let(:options) { {:format => /abc/i} }
       let(:expected) { ["it { should allow_value('abc').for(:username) }"] }
 
-      before { should_receive(:generate_shouldas_for_format_validation).and_return(expected) }
+      before do
+        should_receive(:validation_type).at_least(1).and_return(type) 
+        should_receive(:generate_shouldas_for_format_validation).and_return(expected) 
+      end
 
       it 'should return shouldas for format validation' do
-        send(:generate_shoulda, validation_type, attribute, options).should eq expected
+        send(:generate_shoulda, attribute, options).should eq expected
       end
     end
 
     context 'other types' do
-      let(:validation_type) { 'length' }
+      let(:type) { 'length' }
       let(:options) { {:minimum=>1, :maximum=>20} }
       let(:expected) { ['it { should ensure_length_of(:username).is_at_least(1).is_at_most(20) }'] }
 
       it 'should return 1 complete shoulda test case' do
-        send(:generate_shoulda, validation_type, attribute, options).should eq expected
+        should_receive(:validation_type).at_least(1).and_return(type) 
+        send(:generate_shoulda, attribute, options).should eq expected
       end
     end
   end
 
   describe "#shoulda_option_method_name" do
-    context 'rails validate option is mapped to a shoulda method' do
-      let(:option) { :minimum }
-      let(:expected) { 'is_at_least' }
-      let(:value) { '' }
+    context 'pass filters' do
+      before { should_receive(:pass_filter?).and_return(true) }      
 
-      it 'should return the mapped shoulda method' do
-        send(:shoulda_option_method_name, option, value).should eq expected
-      end
-    end
-
-    context 'rails validate option is mapped to a hash' do
-      context 'value type mapped to a shoulda method' do
-        let(:option) { :in }
-        let(:value) { 1..2 }
-        let(:expected) { 'in_range' }
+      context 'rails validate option is mapped to a shoulda method' do
+        let(:option) { :minimum }
+        let(:expected) { 'is_at_least' }
+        let(:value) { '' }
 
         it 'should return the mapped shoulda method' do
           send(:shoulda_option_method_name, option, value).should eq expected
         end
       end
 
-      context 'value type is not mapped to a shoulda method' do
-        let(:option) { :in }
-        let(:value) { 'abcdef' }        
+      context 'rails validate option is mapped to a hash' do
+        context 'value type mapped to a shoulda method' do
+          let(:option) { :in }
+          let(:value) { 1..2 }
+          let(:expected) { 'in_range' }
 
-        it 'should return nil' do
-          send(:shoulda_option_method_name, option, value).should be_nil
+          it 'should return the mapped shoulda method' do
+            send(:shoulda_option_method_name, option, value).should eq expected
+          end
         end
+
+        context 'value type is not mapped to a shoulda method' do
+          let(:option) { :in }
+          let(:value) { 'abcdef' }        
+
+          it 'should return nil' do
+            send(:shoulda_option_method_name, option, value).should be_nil
+          end
+        end
+      end
+    end
+
+    context 'not pass filters' do
+      before { should_receive(:pass_filter?).and_return(false)}
+
+      it 'should return nil' do
+        send(:shoulda_option_method_name, '', '').should be_nil
       end
     end
   end
@@ -337,6 +361,33 @@ describe 'QuickShoulda::Generator::Validation' do
     it 'should invoke generate_allow_shouldas for matched_strings and unmatched strings' do
       should_receive(:generate_allow_shouldas).with(:matched_strings, matched_strings, attr)
       should_receive(:generate_allow_shouldas).with(:unmatched_strings, unmatched_strings, attr)
+    end
+  end
+
+  describe '#pass_filter?' do
+    context 'option method does not appear in filter list' do
+      let(:option) { 'message' }
+      it 'should return true' do
+        send(:pass_filter?, option).should be_true
+      end
+    end
+
+    context 'option method appears in filter list' do
+      let(:option) { 'allow_blank' }
+
+      context 'option method matches validation_type' do
+        before { should_receive(:validation_type).and_return('inclusion') }
+        it 'should return true' do
+          send(:pass_filter?, option).should be_true
+        end
+      end
+
+      context 'option method does not match validation_type' do
+        before { should_receive(:validation_type).and_return('presence') }
+        it 'should return true' do
+          send(:pass_filter?, option).should be_false
+        end
+      end
     end
   end
 end
