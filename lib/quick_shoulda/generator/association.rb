@@ -38,8 +38,7 @@ module QuickShoulda
         end
 
         def shoulda_option_method_with_value(option, value)    
-          method_name = OptionMethods[option.to_sym]
-          value = SingleQuoteMethods.include?(method_name) ? "'#{value}'" : ":#{value}"
+          method_name = OptionMethods[option.to_sym]          
           ".#{method_name}(#{value})" if method_name
         end
     end
