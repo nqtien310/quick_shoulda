@@ -5,22 +5,33 @@ describe 'QuickShoulda::Generator::SpecContent' do
 
 	describe '#shoulda_content'	do
 		let(:block_name) { :validation }
-		let(:shoulda_lines) do
-			['it { should validate_presence_of(:username) }',
-			 'it { should validate_presence_of(:password) }']
-		end
 
-		let(:expected) do
-			exp = "\tdescribe '#Validations' do\n"
-			exp << "\t\t#{shoulda_lines[0]}\n"
-			exp << "\t\t#{shoulda_lines[1]}\n"
-			exp << "\tend\n\n"
-			exp			
-		end
+		context 'with shoulda test cases' do
+			let(:shoulda_lines) do
+				['it { should validate_presence_of(:username) }',
+				 'it { should validate_presence_of(:password) }']
+			end
 
-		it 'should return whole shoulda content' do			
-			shoulda_content(block_name, shoulda_lines.dup).should eq expected
+			let(:expected) do
+				exp = "\tdescribe '#Validations' do\n"
+				exp << "\t\t#{shoulda_lines[0]}\n"
+				exp << "\t\t#{shoulda_lines[1]}\n"
+				exp << "\tend\n\n"
+				exp			
+			end
+
+			it 'should return whole shoulda content' do			
+				shoulda_content(block_name, shoulda_lines.dup).should eq expected
+			end
 		end
+		
+		context 'with shoulda test cases' do
+			let(:shoulda_lines) { [] }			
+
+			it 'should return whole shoulda content' do			
+				shoulda_content(block_name, shoulda_lines.dup).should eq ''
+			end
+		end		
 	end
 
 	describe '#spec_init_content' do

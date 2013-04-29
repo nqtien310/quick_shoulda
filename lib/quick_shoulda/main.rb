@@ -27,7 +27,7 @@ module QuickShoulda
 
 			def generate_shoulda_content
 				@validations_block = shoulda_content(:validation, generate_validations(model_full_namespace))
-				@associations_block = shoulda_content(:association, generate_associations(model_full_namespace))				
+				@associations_block = shoulda_content(:association, generate_associations(model_full_namespace))
 			end
 
 			def create_and_write_to_file

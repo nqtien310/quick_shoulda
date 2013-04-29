@@ -11,6 +11,8 @@ module QuickShoulda
 			end
 			
 			def shoulda_content(block_name, shoulda_lines)
+				return "" unless shoulda_lines.size > 0
+				
 				block = block_describe_header(block_name)
 				shoulda_lines.map! { |line| "\t#{line}"}
 				shoulda_lines.insert(0, "#{block}")
