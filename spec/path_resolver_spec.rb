@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'QuickShoulda::PathResolver' do
-	include QuickShoulda::Config
+	include QuickShoulda::Main
 	include QuickShoulda::PathResolver
 	before do
 		@path = path
