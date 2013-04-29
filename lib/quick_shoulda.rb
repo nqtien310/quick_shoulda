@@ -26,7 +26,10 @@ module QuickShoulda
 				file.write(spec_init_content)
 			end unless spec_file_exist?
 
-			[:validation, :association].each { |block_name| clear_block block_name }
+			[:validation, :association].each do |block_name| 				
+				clear_block block_describe_header(block_name)
+			end
+			
 			write_block(validations_block + associations_block)
 	 	end
 	end

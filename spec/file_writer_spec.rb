@@ -22,7 +22,7 @@ describe 'QuickShoulda::FileWriter' do
 
 		[:association, :validation].each do |block_name|
 			it "should clear the whole #{block_name} block" do
-				block = block_describe_header(block_name)						
+				block = block_describe_header(block_name)
 				( IO.read(file_path) =~ /#{block}\n.+\n.+\n\tend/ ).should_not be_nil				
 				clear_block(block)
 				( IO.read(file_path) =~ /#{block}\n.+\n.+\n\tend/ ).should be_nil
