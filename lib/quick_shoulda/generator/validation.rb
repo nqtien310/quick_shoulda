@@ -127,7 +127,7 @@ module QuickShoulda
 
         #.is_at_least(50)        
         def shoulda_normal_option_method(method, value)
-          ".#{method}#{option_value(value)}"
+          ".#{method}#{value_transform(value)}"
         end
 
         def shoulda_method_without_value(method)
@@ -137,13 +137,7 @@ module QuickShoulda
         #.scoped_to(:username).scoped_to(:account)
         def shoulda_scope_to_method(value)
           method = OptionMethods[:scope]
-          ([] << value).flatten.map { | v | ".#{method}(:#{v})" }.join
-        end
-
-        #(50)
-        #('value')
-        def option_value(value)
-          value.is_a?(String) ? "('#{value}')" : "(#{value})"
+          ([] << value).flatten.map { | v | ".#{method}#{value_transform(v)}" }.join
         end
     end
   end

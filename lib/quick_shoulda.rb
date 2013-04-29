@@ -8,6 +8,7 @@ require 'fileutils'
 
 module QuickShoulda
 	class << self
+		include StringHelpers
 		include PathResolver
 		include FileWriter
 		include Generator

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe 'QuickShoulda::Generator::Validation' do
+  include QuickShoulda::StringHelpers
   include QuickShoulda::Generator::Validation
 
   describe '#generate' do    
@@ -207,7 +208,7 @@ describe 'QuickShoulda::Generator::Validation' do
     let(:method) { 'is_at_least'}
     let(:value) { 50 }
     let(:expected) { '.is_at_least(50)' }
-    before { should_receive(:option_value).with(value).and_return('(50)') }
+    before { should_receive(:value_transform).with(value).and_return('(50)') }
 
     it 'should return a text contain both method and value' do
       send(:shoulda_normal_option_method, method, value).should eq expected
@@ -313,24 +314,6 @@ describe 'QuickShoulda::Generator::Validation' do
 
       it 'should return nil' do
         send(:shoulda_option_method_name, '', '').should be_nil
-      end
-    end
-  end
-
-  describe '#option_value' do
-    context 'value is String' do
-      let(:value) { 'value' }
-      let(:expected) { "('#{value}')" }
-      it 'should return value encapsulated inside single quote' do
-        send(:option_value, value).should eq expected
-      end
-    end
-
-    context 'value is not String' do
-      let(:value) { 100 }
-      let(:expected) { "(#{value})" }
-      it 'should return value encapsulated inside single quote' do
-        send(:option_value, value).should eq expected
       end
     end
   end
