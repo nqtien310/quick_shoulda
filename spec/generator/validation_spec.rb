@@ -88,6 +88,14 @@ describe 'QuickShoulda::Generator::Validation' do
         send(:validation_type, validator).should be_nil
       end
     end
+
+    context 'custom validator' do
+      let(:validator_class_name) { 'ActiveModel::Validations::EmailValidator' }
+
+      it 'should return nil' do
+        send(:validation_type, validator).should be_nil
+      end
+    end
   end
 
   describe '#shoulda_matcher_method' do

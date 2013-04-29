@@ -3,6 +3,10 @@ require 'quick_shoulda/random_string'
 module QuickShoulda
   module Generator
     module Validation
+      AllowsValidators = [
+        'presence', 'uniqueness', 'acceptance', 'confirmation', 'exclusion', 'format', 'inclusion', 'length', 'numericality'
+      ]
+
       InclusionOptions = {
         :range      => 'in_range',
         :array      => 'in_array'
@@ -38,7 +42,10 @@ module QuickShoulda
 
         def validation_type(validator)
           validation_type = validator.class.to_s.scan(/([^:]+)Validator/)
-          validation_type.first.first.downcase unless validation_type.empty?
+          unless validation_type.empty?
+            validator = validation_type.first.first.downcase
+            validator if AllowsValidators.include? validator
+          end          
         end
 
         def generate_shouldas(validation_type, attributes, options)
