@@ -29,7 +29,9 @@ module QuickShoulda
       }
 
       Filters = {
-        :allow_blank      => 'inclusion'
+        :allow_blank      => ['inclusion'],
+        :allow_nil        => ['inclusion', 'uniqueness'],
+        :case_insensitive => ['uniqueness']
       }
 
       def self.included(base)
@@ -113,7 +115,7 @@ module QuickShoulda
         end
 
         def pass_filter?(option)
-          !Filters[option.to_sym] || Filters[option.to_sym] == validation_type
+          !Filters[option.to_sym] || Filters[option.to_sym].include?(validation_type)
         end
 
         #.is_at_least(50)        
