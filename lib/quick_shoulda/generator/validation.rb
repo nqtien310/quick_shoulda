@@ -34,6 +34,8 @@ module QuickShoulda
         :case_insensitive => ['uniqueness']
       }
 
+      AttrsFilters = ['friendly_id']
+
       def self.included(base)
         base.class_eval do
           attr_accessor :validation_type
@@ -46,10 +48,15 @@ module QuickShoulda
 
       private
 
-        def generate_for_validator(validator)
-          if @validation_type = _validation_type(validator)
-            generate_shouldas(validator.attributes, validator.options)
+        def generate_for_validator(validator)          
+          if @validation_type = _validation_type(validator)            
+            return if ( attrs = attrs_filter(validator.attributes) ).empty?
+            generate_shouldas(attrs, validator.options)
           end
+        end
+
+        def attrs_filter(attrs)
+          attrs.select { |attr| !(AttrsFilters.include? attr.to_s) }
         end
 
         def _validation_type(validator)

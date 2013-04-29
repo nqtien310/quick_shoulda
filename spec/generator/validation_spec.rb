@@ -55,23 +55,54 @@ describe 'QuickShoulda::Generator::Validation' do
   end
 
   describe '#generate_for_validator' do
-    before { should_receive(:_validation_type).and_return(expected_type) }
-
+    before { should_receive(:_validation_type).and_return(type) }
     let(:attributes) { [:username, :email] }
     let(:options) { {:minimum => 100, :maximum => 200} }
     let(:validator) { mock(:validator, :attributes => attributes, :options => options) }
-    let(:expected_type) { 'length' }
+    
 
-    it 'should invoke generate_shouldas valid parameters' do
-      should_receive(:generate_shouldas).with(attributes, options)
-      send(:generate_for_validator, validator)
-    end  
+    context '_validation_type returns nil' do
+      let(:type) { nil }
 
-    it 'should assign value to validation_type attr_accessor' do
-      validation_type.should be_nil
-      send(:generate_for_validator, validator)      
-      validation_type.should eq expected_type
-    end  
+      it 'should return nil' do
+        send(:generate_for_validator, validator).should be_nil
+      end
+    end
+
+    context '_validation_type returns not nil' do
+      let(:type) { 'length' }
+
+      context 'attrs_filter returns an empty array' do
+        before { should_receive(:attrs_filter).and_return([]) }
+
+        it 'should return nil' do
+          send(:generate_for_validator, validator).should be_nil
+        end
+      end
+
+      context 'attrs_filter does not return an empty array' do
+        before { should_receive(:attrs_filter).and_return(attributes) }
+
+        it 'should invoke generate_shouldas valid parameters' do
+          should_receive(:generate_shouldas).with(attributes, options)
+          send(:generate_for_validator, validator)
+        end  
+
+        it 'should assign value to validation_type attr_accessor' do
+          validation_type.should be_nil
+          send(:generate_for_validator, validator)      
+          validation_type.should eq type
+        end  
+      end
+    end
+  end
+
+  describe '#attrs_filter' do
+    let(:attrs) { [:friendly_id, :username]}
+
+    it 'should remove all attr which can not pass filters' do
+      attrs_filter(attrs).should eq [:username]
+    end
   end
 
   describe '#_validation_type' do
