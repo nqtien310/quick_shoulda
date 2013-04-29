@@ -20,9 +20,7 @@ module QuickShoulda
 			end
 
 			def spec_init_content
-				content = "require 'spec_helper'\n\n"
-				content << "describe '#{model_full_namespace}' do\n\n"
-				content << "end"
+				["require 'spec_helper'", "describe '#{model_full_namespace}' do", "end"].join("\n\n")				
 			end
 		end
 	end
