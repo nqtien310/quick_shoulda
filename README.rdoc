@@ -5,6 +5,7 @@ A Rails generator which automatically generates Shoulda test cases ,
 Just by specifying path to your model file , a bunch of Shoulda test cases will be generated for you in the correspondent spec file
 
 == Examples :  
+Sample model :
   
   app/models/user.rb
 
@@ -16,9 +17,11 @@ Just by specifying path to your model file , a bunch of Shoulda test cases will 
     has_many :comments, :through => :posts
   end
 
+Just 1 simple command
+
   Rails generate quick_shoulda:generate app/models/user.rb
 
-  This will add these bellow contents to spec/models/user_spec.rb with  ( QuickShoulda will automatically create this file if not yet created )
+These lines will be added to spec/models/user_spec.rb ( QuickShoulda will automatically create this file if it's not yet created )  
 
   describe 'User' do
     describe '#Validations' do
