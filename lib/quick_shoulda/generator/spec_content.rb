@@ -16,13 +16,15 @@ module QuickShoulda
 				block = block_describe_header(block_name)
 				shoulda_lines.map! { |line| "\t#{line}"}
 				shoulda_lines.insert(0, "#{block}")
-				shoulda_lines << "end\n\n"
+				shoulda_lines << "end\n"
 
 				shoulda_lines.map { |line| "\t#{line}"}.join("\n")	
 			end
 
 			def spec_init_content
-				["require 'spec_helper'", "describe '#{model_full_namespace}' do", "end"].join("\n\n")				
+				content = "require 'spec_helper'\n\n"
+				content << "describe '#{model_full_namespace}' do\n"
+				content << "end"				
 			end
 		end
 	end
