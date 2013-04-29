@@ -23,7 +23,7 @@ module QuickShoulda
 			end
 
 			def random_strings(base)
-				(1..30).map { |length| length.times.inject('') { |initial, n| initial + base[rand(10)].to_s } }
+				(1..50).map { |length| length.times.inject('') { |initial, n| initial + base[rand(10)].to_s } }
 			end
 
 			def generate(pattern)
