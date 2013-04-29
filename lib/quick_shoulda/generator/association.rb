@@ -18,6 +18,8 @@ module QuickShoulda
         :foreign_key => 'with_foreign_key'
       }
 
+      SingleQuoteMethods = ['order', 'class_name']
+
       def generate_associations(model)
         model.reflect_on_all_associations.map { |association| generate_for_association(association) }.compact.flatten
       end
@@ -37,7 +39,7 @@ module QuickShoulda
 
         def shoulda_option_method_with_value(option, value)    
           method_name = OptionMethods[option.to_sym]
-          value = method_name == 'order' ? "'#{value}'" : ":#{value}"
+          value = SingleQuoteMethods.include?(method_name) ? "'#{value}'" : ":#{value}"
           ".#{method_name}(#{value})" if method_name
         end
     end

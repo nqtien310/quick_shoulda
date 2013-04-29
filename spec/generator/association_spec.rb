@@ -19,7 +19,7 @@ describe 'QuickShoulda::Generator::Association' do
     }
 
     let(:expected) do
-      "it { should belong_to(:friendly_user).dependent(:destroy).class_name(:User).order('users.email DESC').with_foreign_key(:friendly_user_id) }"
+      "it { should belong_to(:friendly_user).dependent(:destroy).class_name('User').order('users.email DESC').with_foreign_key(:friendly_user_id) }"
     end
 
     it 'should return valid shoulda test case' do
