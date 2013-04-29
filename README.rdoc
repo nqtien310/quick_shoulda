@@ -1,0 +1,59 @@
+= QuickShoulda
+
+A Rails generator which automatically generates Shoulda test cases , 
+
+Just by specifying path to your model file , a bunch of Shoulda test cases will be generated for you in the correspondent spec file
+
+== Examples :  
+  
+  app/models/user.rb
+
+  class User < ActiveRecord::Base
+    validates :username , :presence => true
+    validates :email, :format => EmailRegex, :uniqueness => true
+
+    has_many :posts
+    has_many :comments, :through => :posts
+  end
+
+  Rails generate quick_shoulda:generate app/models/user.rb
+
+  This will add these bellow contents to spec/models/user_spec.rb with  ( QuickShoulda will automatically create this file if not yet created )
+
+  describe 'User' do
+    describe '#Validations' do
+      it { should validate_presence_of(:username) }
+      it { should validate_uniqueness_of(:email) }
+      it { should allow_value('us@gmail.com').for(:email) }
+      it { should allow_value('us.vn@gmail.com').for(:email) }
+      it { should allow_value('us_vn@gmail.com').for(:email) }
+    end
+    
+    describe '#Associations' do
+      it { should have_many(:posts) }
+      it { should have_many(:comments).through(:posts) }
+    end
+  end
+
+== Installation
+  gem install 'quick_shoulda'
+
+or add to Gemfile:
+  group :development do
+    gem 'quick_shoulda'
+  end
+
+== Usage
+  Rails generate quick_shoulda:generate app/models/user.rb
+
+== Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
+
+== Copyright
+
+Copyright (c) 2013 nqtien310@gmail.com.

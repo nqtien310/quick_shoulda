@@ -8,8 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = QuickShoulda::VERSION
   spec.authors       = ["Tien Nguyen"]
   spec.email         = ["nqtien310@gmail.com"]
-  spec.description   = %q{Generate Shoulda testcases through rails generators}
-  spec.summary       = %q{Generate Shoulda testcases}
+  spec.description   = %q{Read model file to extract the validations/associations
+                          and then utilize Rails generator to write correspondent shoulda test cases to your correspondent spec file }
+  spec.summary       = %q{read through your model file and generate Shoulda test cases }
   spec.homepage      = ""
   spec.license       = "MIT"
 
