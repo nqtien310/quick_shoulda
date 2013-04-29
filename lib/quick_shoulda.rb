@@ -14,7 +14,7 @@ module QuickShoulda
 		include Config
 		include Errors
 		
-		def process(path, spec_folder = 'spec/')	
+		def process(path, spec_folder = 'spec/models/')	
 			raise PathNotGivenError unless path
 			raise NotAModelPathError unless path =~ /models\//
 			raise FileDoesNotExistError unless File.file?(path)			
@@ -29,7 +29,7 @@ module QuickShoulda
 			[:validation, :association].each do |block_name| 				
 				clear_block block_describe_header(block_name)
 			end
-			
+
 			write_block(validations_block + associations_block)
 	 	end
 	end
