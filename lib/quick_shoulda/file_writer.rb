@@ -2,12 +2,18 @@ require 'quick_shoulda/errors'
 
 module QuickShoulda
 	module FileWriter		
-		DescribeRegex = /^describe\s.+\sdo$/i		
+		DescribeRegex = /^describe\s.+\sdo$/i
 
 		def create_file_and_write_init_content
 			FileUtils.mkdir_p(File.dirname(spec_file_path))
 			File.open(spec_file_path, 'w') do |file|
 				file.write(spec_init_content)
+			end
+		end
+
+		def clear_all_blocks
+			[:validation, :association].each do |block_name| 
+				clear_block block_describe_header(block_name)
 			end
 		end
 

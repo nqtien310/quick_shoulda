@@ -39,6 +39,19 @@ describe 'QuickShoulda::FileWriter' do
 		end
 	end
 
+	context '#clear_all_blocks' do
+		let(:association_block_header) { "describe '#Associations' do"}
+		let(:validation_block_header) { "describe '#Validations' do"}
+
+		it 'should invoke clear_block for validation block' do
+			should_receive(:block_describe_header).with(:validation).once.and_return(validation_block_header)
+			should_receive(:block_describe_header).with(:association).once.and_return(association_block_header)
+			should_receive(:clear_block).with(validation_block_header).once
+			should_receive(:clear_block).with(association_block_header).once
+			clear_all_blocks
+		end
+	end
+
 	context '#clear_block' do
 		before do
 			@test_file_content = IO.read(file_path)
