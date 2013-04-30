@@ -20,6 +20,8 @@ Sample model :
 Just 1 simple command
 
   Rails generate quick_shoulda:generate app/models/user.rb
+  or
+  Rails generate quick_shoulda:g app/models/user.rb
 
 These lines will be added to spec/models/user_spec.rb ( QuickShoulda will automatically create this file if it's not yet created )  
 
