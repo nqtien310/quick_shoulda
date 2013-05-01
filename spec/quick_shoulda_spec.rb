@@ -7,7 +7,25 @@ module User
 end
 
 describe 'QuickShoulda' do
-	describe '#process' do
+	describe '#process' do		
+		describe 'paths is empty' do
+			it 'should raise QuickShoulda::Errors::PathNotGivenError' do
+				expect {
+					QuickShoulda.process([nil])
+				}.to raise_error(QuickShoulda::Errors::PathNotGivenError)
+			end
+		end
+
+		describe 'paths is not empty' do
+			let(:paths) { ['User', 'app/models/user.rb'] }
+			it 'should invoke _process for each path' do
+				paths.each { |path| QuickShoulda.should_receive(:_process).with(path) }
+				QuickShoulda.process(paths)
+			end
+		end
+	end
+
+	describe '#_process' do
 		let(:spec_folder) { 'spec/models/' }
 
 		describe 'all valid' do
@@ -17,31 +35,23 @@ describe 'QuickShoulda' do
 			context 'with spec_folder given' do				
 				it 'invoke Main::configure_and_generate with given spec_folder' do
 					QuickShoulda.should_receive(:configure_and_generate).with(path, spec_folder)
-					QuickShoulda.process(path, spec_folder)
+					QuickShoulda._process(path, spec_folder)
 				end
 			end
 
 			context 'without spec_folder given' do
 				it 'invoke Main::configure_and_generate with default spec_folder' do
 					QuickShoulda.should_receive(:configure_and_generate).with(path, 'spec/models/')
-					QuickShoulda.process(path)
+					QuickShoulda._process(path)
 				end
 			end			
 		end
 
 		context 'path is given' do
-			describe 'path is nil' do
-				it 'should raise QuickShoulda::Errors::PathNotGivenError' do
-					expect {
-						QuickShoulda.process(nil)
-					}.to raise_error(QuickShoulda::Errors::PathNotGivenError)
-				end
-			end
-
 			describe 'path does not contain "models/"' do
 				it 'should raise QuickShoulda::Errors::NotAModelPathError' do
 					expect {
-						QuickShoulda.process("not/contain/model/s")
+						QuickShoulda._process("not/contain/model/s")
 					}.to raise_error(QuickShoulda::Errors::NotAModelPathError)
 				end
 			end
@@ -49,7 +59,7 @@ describe 'QuickShoulda' do
 			describe 'file does not exist' do
 				it 'should raise QuickShoulda::Errors::FileDoesNotExistError' do
 					expect {
-						QuickShoulda.process("models/nothere.rb")
+						QuickShoulda._process("models/nothere.rb")
 					}.to raise_error(QuickShoulda::Errors::FileDoesNotExistError)
 				end
 			end
@@ -57,7 +67,7 @@ describe 'QuickShoulda' do
 			describe 'not a ruby file' do
 				it 'should raise QuickShoulda::Errors::NotRubyFileError' do
 					expect {
-						QuickShoulda.process("models/not_a_ruby_file.txt")
+						QuickShoulda._process("models/not_a_ruby_file.txt")
 					}.to raise_error(QuickShoulda::Errors::FileDoesNotExistError)
 				end
 			end
@@ -68,7 +78,7 @@ describe 'QuickShoulda' do
 
 			it 'should not raise any exception' do
 				QuickShoulda.should_receive(:configure_and_generate).with(constant, spec_folder)
-				expect { QuickShoulda.process(constant)	}.not_to raise_error
+				expect { QuickShoulda._process(constant)	}.not_to raise_error
 			end
 		end
 	end	
