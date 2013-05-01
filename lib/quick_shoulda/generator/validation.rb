@@ -1,4 +1,4 @@
-require 'quick_shoulda/random_string'
+require 'random_string'
 
 module QuickShoulda
   module Generator

@@ -34,7 +34,7 @@ describe 'QuickShoulda::Generator::Validation' do
                     inclusion_validator, exclusion_validator, numericality_validator] }
     let(:model) { mock(:model, validators: validators) }
 
-    before { QuickShoulda::RandomString.should_receive(:generate).with(/abc/).and_return(random_strings) }
+    before { RandomString.should_receive(:generate).with(/abc/).and_return(random_strings) }
 
     let(:expected) {
       [
@@ -369,7 +369,7 @@ describe 'QuickShoulda::Generator::Validation' do
       }
     }
 
-    before { QuickShoulda::RandomString.should_receive(:generate).with(options[:with]).and_return(random_strings) }
+    before { RandomString.should_receive(:generate).with(options[:with]).and_return(random_strings) }
     after { send(:generate_shouldas_for_format_validation, attr, options) }
 
     it 'should invoke generate_allow_shouldas for matched_strings and unmatched strings' do
