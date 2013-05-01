@@ -1,4 +1,4 @@
-= QuickShoulda
+= QuickShoulda {<img src="https://badge.fury.io/rb/quick_shoulda.png" alt="Gem Version" />}[http://badge.fury.io/rb/quick_shoulda]
 
 A Rails generator which automatically generates Shoulda test cases , 
 
