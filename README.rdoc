@@ -19,7 +19,7 @@ Sample model :
 
 Just 1 simple command
 
-  Rails generate quick_shoulda:generate app/models/user.rb
+  Rails generate quick_shoulda:g User
   or
   Rails generate quick_shoulda:g app/models/user.rb
 
@@ -49,11 +49,19 @@ or add to Gemfile:
   end
 
 == Usage
-  Rails generate quick_shoulda:generate app/models/user.rb
-  or
-  Rails generate quick_shoulda:g app/models/user.rb
-  or
+Path to model file as parameter
+  Rails generate quick_shoulda:g app/models/user.rb  
+
+Model name as parameter
   Rails generate quick_shoulda:g User
+
+multi model name / paths as parameter
+  Rails generate quick_shoulda:g User Post Comment Admin::Statistic
+  or
+  Rails generate quick_shoulda:g app/models/user.rb app/models/post.rb
+
+
+
 
 == Contributing
 
