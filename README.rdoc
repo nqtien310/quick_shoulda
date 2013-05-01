@@ -50,6 +50,10 @@ or add to Gemfile:
 
 == Usage
   Rails generate quick_shoulda:generate app/models/user.rb
+  or
+  Rails generate quick_shoulda:g app/models/user.rb
+  or
+  Rails generate quick_shoulda:g User
 
 == Contributing
 
