@@ -1,5 +1,7 @@
+require 'quick_shoulda/random_string/data'
+
 module QuickShoulda
-	class RandomString
+	module RandomString
 		class << self
 			Size = 3
 			LowerCaseChars = ('a'..'z').to_a
@@ -10,8 +12,8 @@ module QuickShoulda
 				stored_strings + random_digits_strings + random_chars_strings
 			end
 
-			def stored_strings				
-				@stored_strings ||= YAML.load File.new(File.join(File.dirname(__FILE__),'..','..','data','stored_strings.yml'))
+			def stored_strings		
+				@stored_strings ||= Data::StoredStrings.values.flatten
 			end
 
 			def random_digits_strings

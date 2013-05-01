@@ -6,6 +6,7 @@ describe "QuickShoulda::RandomString" do
 	describe ".stored_strings"	do
 		it 'should return an array of string' do
 			subject.stored_strings.should be_an Array
+			subject.stored_strings.should_not be_empty
 		end
 	end
 
