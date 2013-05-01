@@ -6,16 +6,16 @@ module QuickShoulda
 			end
 		end
 
-		def configure_and_generate(path, spec_folder)
-			configure(path, spec_folder)
+		def configure_and_generate(path)
+			configure(path)
 			generate
 		end
 
 		private
 
-			def configure(path, spec_folder)
+			def configure(path)
 				@path = path
-				@spec_folder = spec_folder[-1] != '/' ? "#{spec_folder}/" : spec_folder
+				@spec_folder = QuickShoulda::Config::SpecFolder
 				@model_full_namespace = _model_full_namespace
 				@spec_file_path = _spec_file_path
 			end

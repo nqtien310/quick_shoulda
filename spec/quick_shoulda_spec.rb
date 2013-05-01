@@ -11,7 +11,7 @@ describe 'QuickShoulda' do
 		describe 'paths is empty' do
 			it 'should raise QuickShoulda::Errors::PathNotGivenError' do
 				expect {
-					QuickShoulda.process([nil])
+					QuickShoulda.process([])
 				}.to raise_error(QuickShoulda::Errors::PathNotGivenError)
 			end
 		end
@@ -26,22 +26,20 @@ describe 'QuickShoulda' do
 	end
 
 	describe '#_process' do
-		let(:spec_folder) { 'spec/models/' }
-
 		describe 'all valid' do
 			let(:path) { 'models/user/friend.rb' }
 			before { File.should_receive(:file?).with(path).once.and_return(true)	}
 
 			context 'with spec_folder given' do				
 				it 'invoke Main::configure_and_generate with given spec_folder' do
-					QuickShoulda.should_receive(:configure_and_generate).with(path, spec_folder)
-					QuickShoulda._process(path, spec_folder)
+					QuickShoulda.should_receive(:configure_and_generate).with(path)
+					QuickShoulda._process(path)
 				end
 			end
 
 			context 'without spec_folder given' do
 				it 'invoke Main::configure_and_generate with default spec_folder' do
-					QuickShoulda.should_receive(:configure_and_generate).with(path, 'spec/models/')
+					QuickShoulda.should_receive(:configure_and_generate).with(path)
 					QuickShoulda._process(path)
 				end
 			end			
@@ -77,7 +75,7 @@ describe 'QuickShoulda' do
 			let(:constant) { "User::Name" }
 
 			it 'should not raise any exception' do
-				QuickShoulda.should_receive(:configure_and_generate).with(constant, spec_folder)
+				QuickShoulda.should_receive(:configure_and_generate).with(constant)
 				expect { QuickShoulda._process(constant)	}.not_to raise_error
 			end
 		end

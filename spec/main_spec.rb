@@ -32,24 +32,23 @@ describe 'QuickShoulda::Main' do
 		include QuickShoulda::Main
 
 		let(:path) { 'path' }
-		let(:spec_folder) { 'spec/models/' }
 
 		it 'should invoke configure and generate' do
-			should_receive(:configure).with(path, spec_folder)
+			should_receive(:configure).with(path)
 			should_receive(:generate)
-			configure_and_generate(path, spec_folder)
+			configure_and_generate(path)
 		end
 	end
 
 	describe '#configure' do
 		include QuickShoulda::Main
+
 		let(:given_path) { 'models/user/friend.rb' }
-		let(:given_spec_folder) { 'spec/models' }
 		let(:validations) {[]}
 		let(:associations) {[]}
 
 		before do						
-			send(:configure,given_path, given_spec_folder) 
+			send(:configure, given_path) 
 		end
 
 		context 'path' do
@@ -58,24 +57,10 @@ describe 'QuickShoulda::Main' do
 			end
 		end
 
-		context 'spec_folder' do
-			let(:expected) { 'spec/models/' }
-
-			context 'with suffix slash' do
-				let(:given_spec_folder) { 'spec/models/' }
-				it 'should store valid value' do
-					spec_folder.should eq expected
-				end
+		context 'spec_folder' do					
+			it 'should store valid value' do
+				spec_folder.should eq QuickShoulda::Config::SpecFolder
 			end
-
-			context 'without suffix slash' do
-				let(:given_spec_folder) { 'spec/models' }
-
-				it 'should store valid value' do					
-					spec_folder.should eq expected
-				end
-			end
-			
 		end
 
 		context 'model_full_namespace' do
