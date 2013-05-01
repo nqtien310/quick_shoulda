@@ -17,9 +17,12 @@ module QuickShoulda
 		
 		def process(path, spec_folder = 'spec/models/')
 			raise PathNotGivenError unless path
-			raise NotAModelPathError unless path =~ /models\//
-			raise FileDoesNotExistError unless File.file?(path)
-			raise NotRubyFileError unless File.extname(path) == '.rb'
+			unless is_a_constant?(path)
+				raise NotAModelPathError unless path =~ /models\//
+				raise FileDoesNotExistError unless File.file?(path)
+				raise NotRubyFileError unless File.extname(path) == '.rb'
+			end
+
 			configure_and_generate(path, spec_folder)
 	 	end
 	end
