@@ -4,54 +4,25 @@ describe 'QuickShoulda::Generator::Validation' do
   include QuickShoulda::StringHelpers
   include QuickShoulda::Generator::Validation
 
-  describe '#generate' do    
-    let(:attribute) { :student }
+  describe '#generate_validators' do
+    let(:validator1){ mock(:validator)}
+    let(:validator2){ mock(:validator)}
+    let(:validator3){ mock(:validator)}
+    let(:validator4){ mock(:validator)}
 
-    let(:presence_options) { {} }    
-    let(:uniqueness_options) { { scope: [:class, :college]} }    
-    let(:format_options) { { with: /abc/} }
-    let(:length_options) { { minimum: 1, maximum: 20}}
-    let(:inclusion_options) { { within: (1..20), :allow_nil => true, :allow_blank => true} }
-    let(:exclusion_options) { { in: ['a', 'b', 'c']} }
-    let(:numericality_options) { { only_integer: true, message: 'must be an integer' } }
-
-    let(:random_strings) do
-      {
-        matched_strings: ['abc'],
-        unmatched_strings: ['nqtien310@gmail.com', 'nqtien310@hotdev.com']
-      }
-    end
-
-    ['presence', 'format', 'uniqueness', 'length', 'inclusion', 'exclusion', 'numericality'].each do | type |      
-      let("#{type}_validator_class") { mock("#{type}_validator_class".to_sym, to_s: "ActiveModel::Validations::#{type.upcase}Validator") }
-      let("#{type}_validator".to_sym) do        
-        mock("#{type}_validator".to_sym, :class => eval("#{type}_validator_class"), 
-                                    attributes: [attribute], options: eval("#{type}_options") )
-      end
-    end
-
-    let(:validators) { [presence_validator, uniqueness_validator, format_validator, length_validator, 
-                    inclusion_validator, exclusion_validator, numericality_validator] }
-    let(:model) { mock(:model, validators: validators) }
-
-    before { RandomString.should_receive(:generate).with(/abc/).and_return(random_strings) }
-
-    let(:expected) {
-      [
-        'it { should validate_presence_of(:student) }',        
-        'it { should validate_uniqueness_of(:student).scoped_to(:class).scoped_to(:college) }',
-        "it { should allow_value('abc').for(:student) }",
-        "it { should_not allow_value('nqtien310@gmail.com').for(:student) }",
-        "it { should_not allow_value('nqtien310@hotdev.com').for(:student) }",
-        "it { should ensure_length_of(:student).is_at_least(1).is_at_most(20) }",
-        "it { should ensure_inclusion_of(:student).in_range(1..20).allow_nil(true).allow_blank(true) }",
-        'it { should ensure_exclusion_of(:student).in_array(["a", "b", "c"]) }',
-        "it { should validate_numericality_of(:student).only_integer.with_message('must be an integer') }"
-      ]
+    let(:validators) {
+      [validator1, validator2, validator3, validator4]
     }
 
-    it 'should return exact array of strings' do      
-      generate_validations(model).should eq expected
+    let(:model) { mock(:model, :validators => validators)}
+
+    it 'should invoke #generate_for_validator for each validator' do
+      should_receive(:generate_for_validator).with(validator1).and_return("it should do something")
+      should_receive(:generate_for_validator).with(validator2).and_return("it should do another thing")
+      should_receive(:generate_for_validator).with(validator3).and_return(nil)
+      should_receive(:generate_for_validator).with(validator4).and_return(["another thing"])
+      result = generate_validations(model)
+      result.should eq ['it should do something', 'it should do another thing', 'another thing']
     end
   end
 
@@ -233,8 +204,8 @@ describe 'QuickShoulda::Generator::Validation' do
         end
 
         context 'do not contain invalid option' do
-          let(:options) { {:minimum=>1, :maximum=>20} }
-          let(:expected) { ".is_at_least(1).is_at_most(20)" }
+          let(:options) { {:maximum=>20, :minimum=>1} }
+          let(:expected) { ".is_at_most(20).is_at_least(1)" }
           it 'should return shoulda option methods corresponded with given options' do
             send(:shoulda_option_methods_chain, options).should eq expected
           end
@@ -263,8 +234,8 @@ describe 'QuickShoulda::Generator::Validation' do
 
     context 'other types' do
       let(:type) { 'length' }
-      let(:options) { {:minimum=>1, :maximum=>20} }
-      let(:expected) { ['it { should ensure_length_of(:username).is_at_least(1).is_at_most(20) }'] }
+      let(:options) { {:maximum=>20, :minimum=>1} }
+      let(:expected) { ['it { should ensure_length_of(:username).is_at_most(20).is_at_least(1) }'] }
 
       it 'should return 1 complete shoulda test case' do
         should_receive(:validation_type).at_least(1).and_return(type) 
@@ -360,12 +331,12 @@ describe 'QuickShoulda::Generator::Validation' do
     let(:attr) { 'email' }
     let(:matched_strings) { ['123','456'] }
     let(:unmatched_strings) { ['abc'] }
-    let(:options) { {with: /123|456/ } }
+    let(:options) { { :with => /123|456/ } }
 
     let(:random_strings) {
       {
-        matched_strings: matched_strings,
-        unmatched_strings: unmatched_strings
+        :matched_strings => matched_strings,
+        :unmatched_strings => unmatched_strings
       }
     }
 

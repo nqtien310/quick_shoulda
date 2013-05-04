@@ -29,7 +29,7 @@ module QuickShoulda
 			end	
 
 			def is_a_constant?(path)
-				( path[0] =~ /[A-Z]/ || path[0] =~ /:/ ) && File.extname(path).empty? && !path.include?('/')
+				( path[0].chr =~ /[A-Z]/ || path[0].chr =~ /:/ ) && File.extname(path).empty? && !path.include?('/')
 			end
 		end
 	end

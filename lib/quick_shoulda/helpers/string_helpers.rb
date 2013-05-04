@@ -11,7 +11,8 @@ module QuickShoulda
       elsif value.is_a? Symbol
         "(:#{value})"
       else
-        "(#{value})"
+        #fix for 1.8.7
+        "(#{value.inspect})"
       end
     end
   end

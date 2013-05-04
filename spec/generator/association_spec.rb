@@ -23,6 +23,11 @@ describe 'QuickShoulda::Generator::Association' do
       "it { should belong_to(:friendly_user).dependent(:destroy).class_name('User').order('users.email DESC').with_foreign_key('friendly_user_id') }"
     end
 
+    before do
+      should_receive(:shoulda_assciation_option_methods_chain).with(options).
+      and_return(".dependent(:destroy).class_name('User').order('users.email DESC').with_foreign_key('friendly_user_id')")
+    end
+
     it 'should return valid shoulda test case' do
       send(:generate_for_association, association).should eq expected
     end
