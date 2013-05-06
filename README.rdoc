@@ -62,8 +62,14 @@ multi model name / paths as parameter
   or
   Rails generate quick_shoulda:g app/models/user.rb app/models/post.rb
 
+== Configurations
+Install config file by
+  Rails generate quick_shoulda:install
 
+This will place the .qshoulda.yml in the root path , then edit this file for configuration purpose
 
+Config location to put the generated spec files
+  spec_folder: test/models 
 
 == Contributing
 
