@@ -4,7 +4,6 @@ require "quick_shoulda/path_resolver"
 require "quick_shoulda/file_writer"
 require "quick_shoulda/generator"
 require "quick_shoulda/main"
-require "quick_shoulda/config"
 require 'fileutils'
 
 module QuickShoulda

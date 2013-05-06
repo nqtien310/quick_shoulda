@@ -47,35 +47,59 @@ describe 'QuickShoulda::Main' do
 		let(:validations) {[]}
 		let(:associations) {[]}
 
-		before do						
-			send(:configure, given_path) 
-		end
-
 		context 'path' do
 			it 'should store valid value' do
+				send(:configure, given_path) 
 				path.should eq given_path
 			end
 		end
 
-		context 'spec_folder' do					
-			it 'should store valid value' do
-				spec_folder.should eq QuickShoulda::Config::SpecFolder
+		context 'config file given' do
+			let(:configs) do
+				{ 'spec_folder' => 'aaaaaaaaaaaa' }
+			end
+
+			before do				
+		  	QuickShoulda::ConfigFileReader.should_receive(:config_file_exist?).and_return(true)
+		  	QuickShoulda::ConfigFileReader.should_receive(:read).and_return(configs)
+		  	send(:configure, given_path) 
+		  end
+
+			context 'spec_folder' do
+				it 'should get value from config file' do
+					send(:spec_folder).should == configs['spec_folder'] + '/'
+				end
 			end
 		end
 
-		context 'model_full_namespace' do
-			let(:expected) { ::User::Friend }
-			it 'should store valid value' do
-				model_full_namespace.should eq expected
+		context 'config file is not given' do
+			before do
+				QuickShoulda::ConfigFileReader.should_receive(:config_file_exist?).and_return(false)
+				send(:configure, given_path) 
 			end
-		end
 
-		context 'spec_file_path' do
-			let(:expected) { 'spec/models/user/friend_spec.rb' }
-			it 'should store valid value' do
-				spec_file_path.should eq expected
+
+			context 'spec_folder' do					
+				it 'should store valid value' do
+					spec_folder.should eq send(:default_spec_folder)
+				end
+			end
+
+			context 'model_full_namespace' do
+				let(:expected) { ::User::Friend }
+				it 'should store valid value' do
+					model_full_namespace.should eq expected
+				end
+			end
+
+			context 'spec_file_path' do
+				let(:expected) { 'spec/models/user/friend_spec.rb' }
+				it 'should store valid value' do
+					spec_file_path.should eq expected
+				end
 			end
 		end
+		
 	end
 
 	describe '#generate' do

@@ -1,3 +1,5 @@
+require 'quick_shoulda/config_file_reader'
+
 module QuickShoulda
 	module Main
 		def self.included(base)
@@ -15,9 +17,20 @@ module QuickShoulda
 
 			def configure(path)
 				@path = path
-				@spec_folder = QuickShoulda::Config::SpecFolder
+				@spec_folder = default_spec_folder
+
+				if ConfigFileReader.config_file_exist?
+					configs = ConfigFileReader.read
+					@spec_folder = configs['spec_folder'].dup if configs['spec_folder']
+					@spec_folder << "/" if @spec_folder[-1].to_s != '/' 
+				end
+
 				@model_full_namespace = _model_full_namespace
 				@spec_file_path = _spec_file_path
+			end
+
+			def default_spec_folder
+				'spec/models/'
 			end
 
 			def generate
@@ -34,6 +47,6 @@ module QuickShoulda
 				create_file_and_write_init_content unless spec_file_exist?
 				clear_all_blocks
 				write_block(validations_block + associations_block)
-			end	
+			end
 	end
 end
