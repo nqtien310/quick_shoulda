@@ -11,7 +11,7 @@ module QuickShoulda
 
 			private 
 				def config_file_name
-					'.qshoulda.yaml'
+					'./.qshoulda.yml'
 				end
 		end		
 	end
