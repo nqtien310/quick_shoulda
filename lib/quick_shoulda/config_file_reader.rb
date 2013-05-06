@@ -1,3 +1,5 @@
+require 'yaml'
+
 module QuickShoulda
 	module ConfigFileReader
 		class << self			
